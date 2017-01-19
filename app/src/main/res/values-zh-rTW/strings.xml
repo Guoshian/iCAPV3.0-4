@@ -18,10 +18,10 @@ however it is impossible to guarantee NetGuard will work correctly on every devi
   <string name="menu_sort_data">=>按流量排序</string>
   <!--<string name="menu_app_used">顯示使用程式</string>-->
 
-  <!--<string name="menu_log">顯示紀錄</string>-->
+  <string name="menu_log">顯示紀錄</string>
   <string name="menu_settings">設定</string>
-  <!--<string name="menu_invite">邀請</string>
-  <string name="menu_support">支援</string>
+  <string name="menu_invite">邀請</string>
+  <!--<string name="menu_support">支援</string>
   <string name="menu_about">關於</string>-->
 
   <string name="menu_protocol_other">Other</string>
@@ -30,6 +30,7 @@ however it is impossible to guarantee NetGuard will work correctly on every devi
   <string name="menu_live">Live updates</string>
   <string name="menu_refresh">Refresh</string>
   <string name="menu_resolve">Show names</string>
+
   <string name="menu_pcap_enabled">PCAP enabled</string>
   <string name="menu_pcap_export">PCAP export</string>
   <string name="menu_clear">清除</string>
@@ -189,6 +190,10 @@ Your internet traffic is not being sent to a remote VPN server.</string>
   <string name="title_pro_bought">啟用</string>
   <string name="title_pro_challenge">驗證密碼</string>
   <string name="title_pro_reponse">回答</string>
+
+  <string name="title_pro1">Capture for Condition</string>
+  <string name="title_pro2">Capture for App</string>
+
   <string-array name="themeNames">
     <item>藍綠 / 橙</item>
     <item>藍 / 橙</item>

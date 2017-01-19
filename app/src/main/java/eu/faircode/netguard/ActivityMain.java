@@ -788,24 +788,28 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
 
 
-            /*case R.id.menu_log:
-                if (IAB.isPurchased(ActivityPro.SKU_LOG, this))
-                    startActivity(new Intent(this, ActivityLog.class));
-                else
-                    startActivity(new Intent(this, ActivityPro.class));
-                return true;*/
-
-
+            case R.id.menu_log:
+                startActivity(new Intent(this, ActivityLog.class));
+                return true;
 
             case R.id.menu_settings:
                 startActivity(new Intent(this, ActivitySettings.class));
                 return true;
 
-            /*case R.id.menu_pro:
-                startActivity(new Intent(ActivityMain.this, ActivityPro.class));
+            case R.id.menu_pro:
+                startActivity(new Intent(this, ActivityPro.class));
                 return true;
 
-            case R.id.menu_invite:
+            case R.id.menu_pro1:
+                startActivity(new Intent(this, ActivityPro1.class));
+                return true;
+
+            case R.id.menu_pro2:
+                startActivity(new Intent(this, ActivityPro2.class));
+                return true;
+
+
+            /*case R.id.menu_invite:
                 startActivityForResult(getIntentInvite(this), REQUEST_INVITE);
                 return true;
 
