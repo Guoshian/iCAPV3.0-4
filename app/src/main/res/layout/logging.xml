@@ -36,16 +36,5 @@
         android:layout_height="0dp"
         android:layout_centerInParent="true" />
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textEmailAddress"
-        android:ems="10"
-        android:id="@+id/editText"
-        android:layout_below="@+id/vwPopupAnchor"
-        android:layout_alignRight="@+id/tvDisabled"
-        android:layout_alignEnd="@+id/tvDisabled"
-        android:layout_marginTop="57dp" />
-
 
 </RelativeLayout>
