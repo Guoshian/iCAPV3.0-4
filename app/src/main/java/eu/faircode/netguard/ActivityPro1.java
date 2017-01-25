@@ -40,7 +40,7 @@ public class ActivityPro1 extends AppCompatActivity {
 
         boolean export = (getPackageManager().resolveActivity(getIntentPCAPDocument(), 0) != null);
 
-        
+
 
         CheckBox_UDP= (CheckBox)findViewById(R.id.checkBox_UDP);
         CheckBox_UDP.setChecked(prefs.getBoolean("UDP", false));
