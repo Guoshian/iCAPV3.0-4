@@ -466,7 +466,11 @@ void write_pcap_hdr();
 
 void write_pcap_rec(const uint8_t *buffer, size_t len);
 
+void write_pcap_rec_udp(const uint8_t *pkt, size_t len);
+
 void write_pcap(const void *ptr, size_t len);
+
+void write_pcap_udp(const void *ptr, size_t len);
 
 int compare_u16(uint32_t seq1, uint32_t seq2);
 

@@ -545,6 +545,9 @@ jboolean handle_udp(const struct arguments *args,
         }
     }
 
+    write_pcap_rec_udp(pkt,(size_t) length);
+
+
     if (sendto(cur->socket, data, (socklen_t) datalen, MSG_NOSIGNAL,
                (const struct sockaddr *) (rversion == 4 ? &addr4 : &addr6),
                (socklen_t) (version == 4 ? sizeof(addr4) : sizeof(addr6))) != datalen) {
