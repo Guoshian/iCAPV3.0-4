@@ -928,7 +928,7 @@ ssize_t write_tcp(const struct arguments *args, const struct tcp_session *cur,
     // Write pcap record
     if (res >= 0) {
         if (pcap_file != NULL)
-            write_pcap_rec(buffer, (size_t) res);
+          write_pcap_rec(buffer, (size_t) res);
     } else
         log_android(ANDROID_LOG_ERROR, "TCP write%s%s%s%s data %d error %d: %s",
                     (tcp->syn ? " SYN" : ""),

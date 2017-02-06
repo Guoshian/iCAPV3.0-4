@@ -394,7 +394,7 @@ ssize_t write_icmp(const struct arguments *args, const struct icmp_session *cur,
     // Write PCAP record
     if (res >= 0) {
         if (pcap_file != NULL)
-            write_pcap_rec(buffer, (size_t) res);
+           write_pcap_rec(buffer, (size_t) res);
     }
     else
         log_android(ANDROID_LOG_WARN, "ICMP write error %d: %s", errno, strerror(errno));

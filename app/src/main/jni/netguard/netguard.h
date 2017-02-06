@@ -464,6 +464,8 @@ jobject create_packet(const struct arguments *args,
 
 void write_pcap_hdr();
 
+void write_pcap_hdr_udp();
+
 void write_pcap_rec(const uint8_t *buffer, size_t len);
 
 void write_pcap_rec_udp(const uint8_t *pkt, size_t len);

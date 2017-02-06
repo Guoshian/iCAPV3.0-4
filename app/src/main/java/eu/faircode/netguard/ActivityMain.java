@@ -698,6 +698,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         // Handle item selection
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         final File pcap_file = new File(getCacheDir(), "netguard.pcap");
+        final File pcap_file_udp = new File(getCacheDir(), "netguardudp.pcap");
 
         switch (item.getItemId()) {
             /*case R.id.menu_app_user:
@@ -759,6 +760,16 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                             SinkholeService.setPcap(pcap_file);
                         } else {
                             if (pcap_file.exists() && !pcap_file.delete())
+                                Log.w(TAG, "Delete PCAP failed");
+                        }
+                        if (prefs.getBoolean("UDP", false)) {
+                            SinkholeService.setPcapudp(null);
+                            if (pcap_file_udp.exists() && !pcap_file_udp.delete())
+                                Log.w(TAG, "Delete PCAP failed");
+                            SinkholeService.setPcapudp(pcap_file_udp);
+                        }
+                        else {
+                            if (pcap_file_udp.exists() && !pcap_file_udp.delete())
                                 Log.w(TAG, "Delete PCAP failed");
                         }
                         return null;

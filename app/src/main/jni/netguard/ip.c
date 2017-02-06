@@ -58,7 +58,7 @@ int check_tun(const struct arguments *args,
         else if (length > 0) {
             // Write pcap record
             if (pcap_file != NULL)
-                write_pcap_rec(buffer, (size_t) length);
+               write_pcap_rec(buffer, (size_t) length);
 
             if (length > max_tun_msg) {
                 max_tun_msg = length;

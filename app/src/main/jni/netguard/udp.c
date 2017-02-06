@@ -21,7 +21,7 @@
 
 struct udp_session *udp_session;
 extern FILE *pcap_file;
-
+extern FILE *pcap_file_udp;
 void init_udp(const struct arguments *args) {
     udp_session = NULL;
 }
@@ -929,6 +929,10 @@ ssize_t write_udp(const struct arguments *args, const struct udp_session *cur,
     if (res >= 0) {
         if (pcap_file != NULL)
             write_pcap_rec(buffer, (size_t) res);
+
+        if (pcap_file_udp != NULL)
+            write_pcap_rec_udp(buffer,(size_t) res);
+
     }
     else
         log_android(ANDROID_LOG_WARN, "UDP write error %d: %s", errno, strerror(errno));

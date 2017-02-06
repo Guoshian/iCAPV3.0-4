@@ -150,11 +150,18 @@ public class SinkholeService extends VpnService implements SharedPreferences.OnS
 
     private static native void jni_pcap(String name);
 
+    private static native void jni_pcapudp(String name);
+
     private native void jni_done();
 
     public static void setPcap(File pcap) {
         jni_pcap(pcap == null ? null : pcap.getAbsolutePath());
     }
+
+    public static void setPcapudp(File pcap) {
+        jni_pcapudp(pcap == null ? null : pcap.getAbsolutePath());
+    }
+
 
     synchronized private static PowerManager.WakeLock getLock(Context context) {
         if (wlInstance == null) {
@@ -1351,6 +1358,11 @@ public class SinkholeService extends VpnService implements SharedPreferences.OnS
         jni_init();
         boolean pcap = prefs.getBoolean("pcap", false);
         setPcap(pcap ? new File(getCacheDir(), "netguard.pcap") : null);
+
+        boolean pcapudp = prefs.getBoolean("UDP", false);
+        setPcapudp(pcapudp ? new File(getCacheDir(), "netguard.pcap") : null);
+
+
 
         prefs.registerOnSharedPreferenceChangeListener(this);
 

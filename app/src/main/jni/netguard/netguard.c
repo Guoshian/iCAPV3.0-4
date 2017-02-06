@@ -34,7 +34,7 @@ int loglevel = ANDROID_LOG_WARN;
 
 extern int max_tun_msg;
 extern FILE *pcap_file;
-
+extern FILE *pcap_file_udp;
 // JNI
 
 jclass clsPacket;
@@ -258,6 +258,77 @@ Java_eu_faircode_netguard_SinkholeService_jni_1pcap(JNIEnv *env, jclass type, js
 }
 
 
+
+JNIEXPORT void JNICALL
+Java_eu_faircode_netguard_SinkholeService_jni_1pcapudp(JNIEnv *env, jclass type, jstring name_) {
+    if (pthread_mutex_lock(&lock))
+        log_android(ANDROID_LOG_ERROR, "pthread_mutex_lock failed");
+
+    if (name_ == NULL) {
+        if (pcap_file_udp != NULL) {
+            int flags = fcntl(fileno(pcap_file_udp), F_GETFL, 0);
+            if (flags < 0 || fcntl(fileno(pcap_file_udp), F_SETFL, flags & ~O_NONBLOCK) < 0)
+                log_android(ANDROID_LOG_ERROR, "PCAP fcntl ~O_NONBLOCK error %d: %s",
+                            errno, strerror(errno));
+
+            if (fsync(fileno(pcap_file_udp)))
+                log_android(ANDROID_LOG_ERROR, "PCAP fsync error %d: %s", errno, strerror(errno));
+
+            if (fclose(pcap_file_udp))
+                log_android(ANDROID_LOG_ERROR, "PCAP fclose error %d: %s", errno, strerror(errno));
+
+            pcap_file_udp = NULL;
+        }
+        log_android(ANDROID_LOG_INFO, "PCAP disabled");
+    }
+    else {
+        const char *name = (*env)->GetStringUTFChars(env, name_, 0);
+        log_android(ANDROID_LOG_INFO, "PCAP file %s", name);
+
+        pcap_file_udp = fopen(name, "ab+");
+        if (pcap_file_udp == NULL)
+            log_android(ANDROID_LOG_ERROR, "PCAP fopen error %d: %s", errno, strerror(errno));
+        else {
+            int flags = fcntl(fileno(pcap_file_udp), F_GETFL, 0);
+            if (flags < 0 || fcntl(fileno(pcap_file_udp), F_SETFL, flags | O_NONBLOCK) < 0)
+                log_android(ANDROID_LOG_ERROR, "PCAP fcntl O_NONBLOCK error %d: %s",
+                            errno, strerror(errno));
+
+            if (ftell(pcap_file_udp) == 0) {
+                log_android(ANDROID_LOG_INFO, "Initializing PCAP");
+                write_pcap_hdr_udp();
+            }
+        }
+
+        (*env)->ReleaseStringUTFChars(env, name_, name);
+    }
+
+    if (pthread_mutex_unlock(&lock))
+        log_android(ANDROID_LOG_ERROR, "pthread_mutex_unlock failed");
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 JNIEXPORT void JNICALL
 Java_eu_faircode_netguard_SinkholeService_jni_1done(JNIEnv *env, jobject instance) {
     log_android(ANDROID_LOG_INFO, "Done");
@@ -283,6 +354,14 @@ Java_eu_faircode_netguard_Util_jni_1getprop(JNIEnv *env, jclass type, jstring na
 
     return (*env)->NewStringUTF(env, value);
 }
+
+
+
+
+
+
+
+
 
 JNIEXPORT jboolean JNICALL
 Java_eu_faircode_netguard_Util_is_1numeric_1address(JNIEnv *env, jclass type, jstring ip_) {

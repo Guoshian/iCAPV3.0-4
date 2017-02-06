@@ -32,8 +32,21 @@ void write_pcap_hdr() {
     pcap_hdr.snaplen = MAX_PCAP_RECORD;
     pcap_hdr.network = LINKTYPE_RAW;
     write_pcap(&pcap_hdr, sizeof(struct pcap_hdr_s));
+}
+
+void write_pcap_hdr_udp() {
+    struct pcap_hdr_s pcap_hdr;
+    pcap_hdr.magic_number = 0xa1b2c3d4;
+    pcap_hdr.version_major = 2;
+    pcap_hdr.version_minor = 4;
+    pcap_hdr.thiszone = 0;
+    pcap_hdr.sigfigs = 0;
+    pcap_hdr.snaplen = MAX_PCAP_RECORD;
+    pcap_hdr.network = LINKTYPE_RAW;
     write_pcap_udp(&pcap_hdr, sizeof(struct pcap_hdr_s));
 }
+
+
 
 void write_pcap_rec(const uint8_t *buffer, size_t length) {
     struct timespec ts;
