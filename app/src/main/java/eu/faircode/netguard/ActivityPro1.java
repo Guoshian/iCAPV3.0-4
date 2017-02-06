@@ -53,7 +53,6 @@ public class ActivityPro1 extends AppCompatActivity {
             Button_UDP.setEnabled(false);
 
 
-
         CheckBox_UDP.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
             @Override

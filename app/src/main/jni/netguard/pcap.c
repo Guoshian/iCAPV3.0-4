@@ -50,6 +50,14 @@ void write_pcap_rec(const uint8_t *buffer, size_t length) {
     write_pcap(buffer, plen);
 }
 
+
+
+
+
+
+
+
+
 void write_pcap(const void *ptr, size_t len) {
     if (fwrite(ptr, len, 1, pcap_file) < 1)
         log_android(ANDROID_LOG_ERROR, "PCAP fwrite error %d: %s", errno, strerror(errno));
