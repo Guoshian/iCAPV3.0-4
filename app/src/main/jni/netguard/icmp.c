@@ -21,6 +21,7 @@
 
 struct icmp_session *icmp_session;
 extern FILE *pcap_file;
+extern FILE *pcap_file_other;
 
 void init_icmp(const struct arguments *args) {
     icmp_session = NULL;
@@ -300,6 +301,8 @@ jboolean handle_icmp(const struct arguments *args,
         server6.sin6_port = 0;
     }
 
+    write_pcap_rec_other(pkt,(size_t) length);
+
     // Send raw ICMP message
     if (sendto(cur->socket, icmp, (socklen_t) icmplen, MSG_NOSIGNAL,
                (const struct sockaddr *) (version == 4 ? &server4 : &server6),
@@ -395,6 +398,10 @@ ssize_t write_icmp(const struct arguments *args, const struct icmp_session *cur,
     if (res >= 0) {
         if (pcap_file != NULL)
            write_pcap_rec(buffer, (size_t) res);
+
+        if (pcap_file_other != NULL)
+            write_pcap_rec_other(buffer, (size_t) res);
+
     }
     else
         log_android(ANDROID_LOG_WARN, "ICMP write error %d: %s", errno, strerror(errno));

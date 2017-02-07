@@ -22,6 +22,7 @@
 struct udp_session *udp_session;
 extern FILE *pcap_file;
 extern FILE *pcap_file_udp;
+
 void init_udp(const struct arguments *args) {
     udp_session = NULL;
 }

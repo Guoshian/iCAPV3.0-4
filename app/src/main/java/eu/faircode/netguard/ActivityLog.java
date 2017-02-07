@@ -323,6 +323,9 @@ public class ActivityLog extends AppCompatActivity implements SharedPreferences.
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         final File pcap_file = new File(getCacheDir(), "netguard.pcap");
         final File pcap_file_udp = new File(getCacheDir(), "netguardudp.pcap");
+        final File pcap_file_tcp = new File(getCacheDir(), "netguardtcp.pcap");
+        final File pcap_file_other = new File(getCacheDir(), "netguardother.pcap");
+
         switch (item.getItemId()) {
             case android.R.id.home:
                 Log.i(TAG, "Up");
@@ -414,8 +417,26 @@ public class ActivityLog extends AppCompatActivity implements SharedPreferences.
                             if (pcap_file_udp.exists() && !pcap_file_udp.delete())
                                 Log.w(TAG, "Delete PCAP failed");
                         }
-
-
+                        if (prefs.getBoolean("TCP", false)) {
+                            SinkholeService.setPcaptcp(null);
+                            if (pcap_file_tcp.exists() && !pcap_file_tcp.delete())
+                                Log.w(TAG, "Delete PCAP failed");
+                            SinkholeService.setPcaptcp(pcap_file_tcp);
+                        }
+                        else {
+                            if (pcap_file_tcp.exists() && !pcap_file_tcp.delete())
+                                Log.w(TAG, "Delete PCAP failed");
+                        }
+                        if (prefs.getBoolean("Other", false)) {
+                            SinkholeService.setPcapother(null);
+                            if (pcap_file_other.exists() && !pcap_file_other.delete())
+                                Log.w(TAG, "Delete PCAP failed");
+                            SinkholeService.setPcapother(pcap_file_other);
+                        }
+                        else {
+                            if (pcap_file_other.exists() && !pcap_file_other.delete())
+                                Log.w(TAG, "Delete PCAP failed");
+                        }
 
                         return null;
                     }
