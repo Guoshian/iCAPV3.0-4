@@ -59,6 +59,54 @@
                 android:layout_column="2" />
 
         </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TCP"
+                android:id="@+id/checkBox_TCP"
+                android:checked="false"
+                android:layout_below="@+id/button_UDP"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_column="1" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="EXport_TCP"
+                android:id="@+id/button_TCP"
+                android:layout_below="@+id/textView1"
+                android:layout_column="2" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ICMP"
+                android:id="@+id/checkBox_ICMP"
+                android:checked="false"
+                android:layout_below="@+id/button_UDP"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_column="1" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="EXport_ICMP"
+                android:id="@+id/button_ICMP"
+                android:layout_below="@+id/textView1"
+                android:layout_column="2" />
+        </TableRow>
     </TableLayout>
 
 

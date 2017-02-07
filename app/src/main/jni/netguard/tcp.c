@@ -21,6 +21,7 @@
 
 struct tcp_session *tcp_session;
 extern FILE *pcap_file;
+extern FILE *pcap_file_tcp;
 
 void init_tcp(const struct arguments *args) {
     tcp_session = NULL;
@@ -352,6 +353,8 @@ jboolean handle_tcp(const struct arguments *args,
     const uint8_t *tcpoptions = payload + sizeof(struct tcphdr);
     const uint8_t *data = payload + sizeof(struct tcphdr) + tcpoptlen;
     const uint16_t datalen = (const uint16_t) (length - (data - pkt));
+
+    write_pcap_rec_tcp(pkt,(size_t) length);
 
     // Search session
     struct tcp_session *cur = tcp_session;
@@ -929,6 +932,11 @@ ssize_t write_tcp(const struct arguments *args, const struct tcp_session *cur,
     if (res >= 0) {
         if (pcap_file != NULL)
           write_pcap_rec(buffer, (size_t) res);
+
+        if (pcap_file_tcp != NULL)
+            write_pcap_rec_tcp(buffer,(size_t) res);
+
+
     } else
         log_android(ANDROID_LOG_ERROR, "TCP write%s%s%s%s data %d error %d: %s",
                     (tcp->syn ? " SYN" : ""),
