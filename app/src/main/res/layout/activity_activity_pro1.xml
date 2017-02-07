@@ -91,8 +91,8 @@
             <CheckBox
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="ICMP"
-                android:id="@+id/checkBox_ICMP"
+                android:text="Other"
+                android:id="@+id/checkBox_Other"
                 android:checked="false"
                 android:layout_below="@+id/button_UDP"
                 android:layout_alignParentLeft="true"
@@ -102,8 +102,8 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="EXport_ICMP"
-                android:id="@+id/button_ICMP"
+                android:text="EXport_Other"
+                android:id="@+id/button_Other"
                 android:layout_below="@+id/textView1"
                 android:layout_column="2" />
         </TableRow>
