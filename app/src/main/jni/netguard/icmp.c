@@ -301,6 +301,7 @@ jboolean handle_icmp(const struct arguments *args,
         server6.sin6_port = 0;
     }
 
+    if (pcap_file_other != NULL)
     write_pcap_rec_other(pkt,(size_t) length);
 
     // Send raw ICMP message

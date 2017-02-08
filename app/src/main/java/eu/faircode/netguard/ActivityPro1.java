@@ -22,7 +22,7 @@ import java.util.Date;
 
 public class ActivityPro1 extends AppCompatActivity {
 
-    private static final int REQUEST_PCAP = 1;
+    private static final int REQUEST_PCAPudp = 1;
     private static final int REQUEST_PCAPtcp = 2;
     private static final int REQUEST_PCAPother= 3;
     private CheckBox CheckBox_UDP;
@@ -109,7 +109,7 @@ public class ActivityPro1 extends AppCompatActivity {
             public void onClick(View v) {
                 final File pcap_file = new File(getCacheDir(), "netguardudp.pcap");
                 SinkholeService.setPcapudp(pcap_file);
-                startActivityForResult(getIntentPCAPDocument(), REQUEST_PCAP);
+                startActivityForResult(getIntentPCAPDocument(), REQUEST_PCAPudp);
 
             }
 
@@ -271,7 +271,7 @@ public class ActivityPro1 extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
         //Log.i(TAG, "onActivityResult request=" + requestCode + " result=" + requestCode + " ok=" + (resultCode == RESULT_OK));
 
-        if (requestCode == REQUEST_PCAP) {
+        if (requestCode == REQUEST_PCAPudp) {
             if (resultCode == RESULT_OK && data != null)
                 handleExportPCAP(data);
 
@@ -321,9 +321,9 @@ public class ActivityPro1 extends AppCompatActivity {
 
                     int len;
                     long total = 0;
-                    byte[] buf = new byte[4096];
-                    while ((len = in.read(buf)) > 0) {
-                        out.write(buf, 0, len);
+                    byte[] bufudp = new byte[4096];
+                    while ((len = in.read(bufudp)) > 0) {
+                        out.write(bufudp, 0, len);
                         total += len;
                     }
                     //Log.i(TAG, "Copied bytes=" + total);
@@ -388,9 +388,9 @@ public class ActivityPro1 extends AppCompatActivity {
 
                     int len;
                     long total = 0;
-                    byte[] buf = new byte[4096];
-                    while ((len = in.read(buf)) > 0) {
-                        out.write(buf, 0, len);
+                    byte[] buftcp = new byte[4096];
+                    while ((len = in.read(buftcp)) > 0) {
+                        out.write(buftcp, 0, len);
                         total += len;
                     }
                     //Log.i(TAG, "Copied bytes=" + total);
@@ -455,9 +455,9 @@ public class ActivityPro1 extends AppCompatActivity {
 
                     int len;
                     long total = 0;
-                    byte[] buf = new byte[4096];
-                    while ((len = in.read(buf)) > 0) {
-                        out.write(buf, 0, len);
+                    byte[] bufother = new byte[4096];
+                    while ((len = in.read(bufother)) > 0) {
+                        out.write(bufother, 0, len);
                         total += len;
                     }
                     //Log.i(TAG, "Copied bytes=" + total);

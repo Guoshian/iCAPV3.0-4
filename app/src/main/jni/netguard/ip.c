@@ -207,6 +207,9 @@ void handle_ip(const struct arguments *args,
     uint16_t sport = 0;
     uint16_t dport = 0;
     if (protocol == IPPROTO_ICMP || protocol == IPPROTO_ICMPV6) {
+
+
+
         if (length - (payload - pkt) < sizeof(struct icmp)) {
             log_android(ANDROID_LOG_WARN, "ICMP packet too short");
             return;

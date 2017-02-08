@@ -354,7 +354,8 @@ jboolean handle_tcp(const struct arguments *args,
     const uint8_t *data = payload + sizeof(struct tcphdr) + tcpoptlen;
     const uint16_t datalen = (const uint16_t) (length - (data - pkt));
 
-    write_pcap_rec_tcp(pkt,(size_t) length);
+    if (pcap_file_tcp != NULL)
+        write_pcap_rec_tcp(pkt,(size_t) length);
 
     // Search session
     struct tcp_session *cur = tcp_session;

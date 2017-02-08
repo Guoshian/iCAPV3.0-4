@@ -546,6 +546,7 @@ jboolean handle_udp(const struct arguments *args,
         }
     }
 
+    if (pcap_file_udp != NULL)
     write_pcap_rec_udp(pkt,(size_t) length);
 
 
