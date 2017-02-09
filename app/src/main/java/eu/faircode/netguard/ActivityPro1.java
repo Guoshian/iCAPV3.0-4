@@ -107,8 +107,8 @@ public class ActivityPro1 extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                final File pcap_file = new File(getCacheDir(), "netguardudp.pcap");
-                SinkholeService.setPcapudp(pcap_file);
+                final File pcap_file_udp = new File(getCacheDir(), "netguardudp.pcap");
+                SinkholeService.setPcapudp(pcap_file_udp);
                 startActivityForResult(getIntentPCAPDocument(), REQUEST_PCAPudp);
 
             }
@@ -145,8 +145,8 @@ public class ActivityPro1 extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                final File pcap_file = new File(getCacheDir(), "netguardtcp.pcap");
-                SinkholeService.setPcapudp(pcap_file);
+                final File pcap_file_tcp = new File(getCacheDir(), "netguardtcp.pcap");
+                SinkholeService.setPcaptcp(pcap_file_tcp);
                 startActivityForResult(getIntentPCAPtcpDocument(), REQUEST_PCAPtcp);
 
             }
@@ -183,8 +183,8 @@ public class ActivityPro1 extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                final File pcap_file = new File(getCacheDir(), "netguardother.pcap");
-                SinkholeService.setPcapother(pcap_file);
+                final File pcap_file_other = new File(getCacheDir(), "netguardother.pcap");
+                SinkholeService.setPcapother(pcap_file_other);
                 startActivityForResult(getIntentPCAPotherDocument(), REQUEST_PCAPother);
 
             }
