@@ -427,7 +427,7 @@ public class ActivityLog extends AppCompatActivity implements SharedPreferences.
                             if (pcap_file_tcp.exists() && !pcap_file_tcp.delete())
                                 Log.w(TAG, "Delete PCAP failed");
                         }
-                        if (prefs.getBoolean("Other", false)) {
+                        /*if (prefs.getBoolean("Other", false)) {
                             SinkholeService.setPcapother(null);
                             if (pcap_file_other.exists() && !pcap_file_other.delete())
                                 Log.w(TAG, "Delete PCAP failed");
@@ -436,7 +436,7 @@ public class ActivityLog extends AppCompatActivity implements SharedPreferences.
                         else {
                             if (pcap_file_other.exists() && !pcap_file_other.delete())
                                 Log.w(TAG, "Delete PCAP failed");
-                        }
+                        }*/
 
                         return null;
                     }
