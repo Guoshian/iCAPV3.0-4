@@ -47,7 +47,9 @@
                 android:layout_below="@+id/button_UDP"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_column="1" />
+                android:layout_column="1"
+                android:layout_span="3"
+                android:textSize="20sp"/>
 
             <Button
                 android:layout_width="wrap_content"
@@ -56,7 +58,7 @@
                 android:id="@+id/button_UDP"
                 android:layout_below="@+id/textView1"
 
-                android:layout_column="2" />
+                android:layout_column="4" />
 
         </TableRow>
 
@@ -73,7 +75,9 @@
                 android:layout_below="@+id/button_UDP"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_column="1" />
+                android:layout_column="1"
+                android:layout_span="3"
+                android:textSize="20sp"/>
 
             <Button
                 android:layout_width="wrap_content"
@@ -81,10 +85,10 @@
                 android:text="EXport_TCP"
                 android:id="@+id/button_TCP"
                 android:layout_below="@+id/textView1"
-                android:layout_column="2" />
+                android:layout_column="4" />
         </TableRow>
 
-        <!--<TableRow
+        <TableRow
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -97,16 +101,16 @@
                 android:layout_below="@+id/button_UDP"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_column="1" />
+                android:layout_column="3" />
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="EXport_Other"
+                android:text="EXport_port80"
                 android:id="@+id/button_Other"
                 android:layout_below="@+id/textView1"
-                android:layout_column="2" />
-        </TableRow>-->
+                android:layout_column="4" />
+        </TableRow>
     </TableLayout>
 
 

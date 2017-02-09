@@ -56,12 +56,12 @@ public class ActivityPro1 extends AppCompatActivity {
         CheckBox_TCP= (CheckBox)findViewById(R.id.checkBox_TCP);
         CheckBox_TCP.setChecked(prefs.getBoolean("TCP", false));
 
-        //CheckBox_Other= (CheckBox)findViewById(R.id.checkBox_Other);
-        //CheckBox_Other.setChecked(prefs.getBoolean("Other", false));
+        CheckBox_Other= (CheckBox)findViewById(R.id.checkBox_Other);
+        CheckBox_Other.setChecked(prefs.getBoolean("Other", false));
 
         Button_UDP = (Button)findViewById(R.id.button_UDP);
         Button_TCP = (Button)findViewById(R.id.button_TCP);
-        //Button_Other = (Button)findViewById(R.id.button_Other);
+        Button_Other = (Button)findViewById(R.id.button_Other);
 
         if ((CheckBox_UDP.isChecked())==true)
             Button_UDP.setEnabled(true);
@@ -74,10 +74,10 @@ public class ActivityPro1 extends AppCompatActivity {
         else
             Button_TCP.setEnabled(false);
 
-        //if ((CheckBox_Other.isChecked())==true)
-        //    Button_Other.setEnabled(true);
-        //else
-        //    Button_Other.setEnabled(false);
+        if ((CheckBox_Other.isChecked())==true)
+            Button_Other.setEnabled(true);
+        else
+            Button_Other.setEnabled(false);
 
 
 
@@ -157,7 +157,7 @@ public class ActivityPro1 extends AppCompatActivity {
 
 
 
-        /*CheckBox_Other.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        CheckBox_Other.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -175,11 +175,11 @@ public class ActivityPro1 extends AppCompatActivity {
 
 
             }
-        });*/
+        });
 
 
 
-        /*Button_Other.setOnClickListener(new Button.OnClickListener() {
+        Button_Other.setOnClickListener(new Button.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -190,7 +190,7 @@ public class ActivityPro1 extends AppCompatActivity {
             }
 
 
-        });*/
+        });
 
 
 
@@ -207,7 +207,7 @@ public class ActivityPro1 extends AppCompatActivity {
 
         prefs.edit().putBoolean("UDP", CheckBox_UDP.isChecked()).apply();
         prefs.edit().putBoolean("TCP", CheckBox_TCP.isChecked()).apply();
-        //prefs.edit().putBoolean("Other", CheckBox_Other.isChecked()).apply();
+        prefs.edit().putBoolean("Other", CheckBox_Other.isChecked()).apply();
 
     }
 
@@ -249,7 +249,7 @@ public class ActivityPro1 extends AppCompatActivity {
         return intent;
     }
 
-    /*private Intent getIntentPCAPotherDocument() {
+    private Intent getIntentPCAPotherDocument() {
         Intent intent;
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             if (Util.isPackageInstalled("org.openintents.filemanager", this)) {
@@ -265,7 +265,7 @@ public class ActivityPro1 extends AppCompatActivity {
             intent.putExtra(Intent.EXTRA_TITLE, "netguardother_" + new SimpleDateFormat("yyyyMMdd").format(new Date().getTime()) + ".pcap");
         }
         return intent;
-    }*/
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
@@ -290,14 +290,14 @@ public class ActivityPro1 extends AppCompatActivity {
             super.onActivityResult(requestCode, resultCode, data);
         }
 
-        /*if (requestCode == REQUEST_PCAPother) {
+        if (requestCode == REQUEST_PCAPother) {
             if (resultCode == RESULT_OK && data != null)
                 handleExportPCAPother(data);
 
         } else {
             //  Log.w(TAG, "Unknown activity result request=" + requestCode);
             super.onActivityResult(requestCode, resultCode, data);
-        }*/
+        }
     }
 
     private void handleExportPCAP(final Intent data) {
@@ -434,7 +434,7 @@ public class ActivityPro1 extends AppCompatActivity {
     }
 
 
-    /*private void handleExportPCAPother(final Intent data) {
+    private void handleExportPCAPother(final Intent data) {
         new AsyncTask<Object, Object, Throwable>() {
             @Override
             protected Throwable doInBackground(Object... objects) {
@@ -442,7 +442,7 @@ public class ActivityPro1 extends AppCompatActivity {
                 FileInputStream in = null;
                 try {
                     // Stop capture
-                    //SinkholeService.setPcapother(null);
+                    SinkholeService.setPcapother(null);
 
                     Uri target = data.getData();
                     if (data.hasExtra("org.openintents.extra.DIR_PATH"))
@@ -485,7 +485,7 @@ public class ActivityPro1 extends AppCompatActivity {
                     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ActivityPro1.this);
                     if (prefs.getBoolean("Other", false)) {
                         File pcap_file_other = new File(getCacheDir(), "netguardother.pcap");
-                        //SinkholeService.setPcapother(pcap_file_other);
+                        SinkholeService.setPcapother(pcap_file_other);
                     }
                 }
             }
@@ -498,7 +498,7 @@ public class ActivityPro1 extends AppCompatActivity {
                     Toast.makeText(ActivityPro1.this, ex.toString(), Toast.LENGTH_LONG).show();
             }
         }.execute();
-    }*/
+    }
 
 
 

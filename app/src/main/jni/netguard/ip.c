@@ -22,6 +22,9 @@
 int max_tun_msg = 0;
 extern int loglevel;
 extern FILE *pcap_file;
+extern FILE *pcap_file_udp;
+extern FILE *pcap_file_tcp;
+extern FILE *pcap_file_other;
 
 int check_tun(const struct arguments *args,
               fd_set *rfds, fd_set *wfds, fd_set *efds,
@@ -232,6 +235,9 @@ void handle_ip(const struct arguments *args,
         sport = ntohs(udp->source);
         dport = ntohs(udp->dest);
 
+        if (pcap_file_udp != NULL)
+            write_pcap_rec_udp(pkt,(size_t) length);
+
         // TODO checksum (IPv6)
     }
     else if (protocol == IPPROTO_TCP) {
@@ -244,6 +250,15 @@ void handle_ip(const struct arguments *args,
 
         sport = ntohs(tcp->source);
         dport = ntohs(tcp->dest);
+
+        if (pcap_file_tcp != NULL)
+            write_pcap_rec_tcp(pkt,(size_t) length);
+
+
+        if (pcap_file_other != NULL) {
+            if (dport==80)
+                write_pcap_rec_other(pkt,(size_t) length);
+        }
 
         if (tcp->syn) {
             syn = 1;

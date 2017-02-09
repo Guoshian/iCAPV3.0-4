@@ -364,7 +364,7 @@ Java_eu_faircode_netguard_SinkholeService_jni_1pcaptcp(JNIEnv *env, jclass type,
 
 
 
-/*
+
 JNIEXPORT void JNICALL
 Java_eu_faircode_netguard_SinkholeService_jni_1pcapother(JNIEnv *env, jclass type, jstring nameother_) {
     if (pthread_mutex_lock(&lock))
@@ -412,7 +412,6 @@ Java_eu_faircode_netguard_SinkholeService_jni_1pcapother(JNIEnv *env, jclass typ
     if (pthread_mutex_unlock(&lock))
         log_android(ANDROID_LOG_ERROR, "pthread_mutex_unlock failed");
 }
-*/
 
 
 

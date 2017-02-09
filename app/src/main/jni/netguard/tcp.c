@@ -22,7 +22,7 @@
 struct tcp_session *tcp_session;
 extern FILE *pcap_file;
 extern FILE *pcap_file_tcp;
-
+extern FILE *pcap_file_other;
 void init_tcp(const struct arguments *args) {
     tcp_session = NULL;
 }
@@ -354,8 +354,6 @@ jboolean handle_tcp(const struct arguments *args,
     const uint8_t *data = payload + sizeof(struct tcphdr) + tcpoptlen;
     const uint16_t datalen = (const uint16_t) (length - (data - pkt));
 
-    if (pcap_file_tcp != NULL)
-        write_pcap_rec_tcp(pkt,(size_t) length);
 
     // Search session
     struct tcp_session *cur = tcp_session;
@@ -813,6 +811,8 @@ ssize_t write_tcp(const struct arguments *args, const struct tcp_session *cur,
     uint16_t csum;
     char source[INET6_ADDRSTRLEN + 1];
     char dest[INET6_ADDRSTRLEN + 1];
+    uint16_t sport = 0;
+    uint16_t dport = 0;
 
     // Build packet
     int optlen = (syn ? 4 : 0);
@@ -927,6 +927,9 @@ ssize_t write_tcp(const struct arguments *args, const struct tcp_session *cur,
                 ntohl(tcp->ack_seq) - cur->remote_start,
                 datalen);
 
+    sport = ntohs(tcp->source);
+    dport = ntohs(tcp->dest);
+
     ssize_t res = write(args->tun, buffer, len);
 
     // Write pcap record
@@ -936,6 +939,11 @@ ssize_t write_tcp(const struct arguments *args, const struct tcp_session *cur,
 
         if (pcap_file_tcp != NULL)
             write_pcap_rec_tcp(buffer,(size_t) res);
+
+        if (pcap_file_other != NULL) {
+            if (sport==80)
+                write_pcap_rec_other(buffer,(size_t) res);
+        }
 
 
     } else
