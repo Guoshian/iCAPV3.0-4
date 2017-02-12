@@ -9,4 +9,86 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="eu.faircode.netguard.ActivityPro2">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/linearLayout"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="69dp"
+            android:id="@+id/spinner1"
+            android:entries="@array/spinner_list"
+            android:clickable="false"
+            style="@style/Base.Widget.AppCompat.Spinner.Underlined"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="AND"
+            android:id="@+id/textView8"
+            android:textColor="#111010"/>
+
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="61dp"
+            android:id="@+id/spinner2"
+            android:layout_gravity="center_horizontal"
+            android:entries="@array/spinner_list"
+            style="@style/Base.Widget.AppCompat.Spinner.Underlined"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:gravity="center_horizontal"
+            android:text="AND"
+            android:id="@+id/textView12"
+            android:layout_below="@+id/linearLayout"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:textColor="#111010"/>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="27dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:text="@string/title_raddr"
+            android:textAppearance="@style/TextMedium"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:id="@+id/textView13" />
+
+        <EditText
+            android:id="@+id/editText4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextMedium"
+            android:layout_below="@+id/textView13"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+    </LinearLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Enter"
+        android:id="@+id/button"
+        android:layout_below="@+id/linearLayout"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="33dp" />
+
 </RelativeLayout>
