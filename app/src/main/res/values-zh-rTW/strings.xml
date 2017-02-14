@@ -203,13 +203,23 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <item>綠</item>
   </string-array>
 
+  <string-array name="spinner_list1">
+    <item>AND</item>
+    <item>OR</item>
+    <item>NOT</item>
 
-  <string-array name="spinner_list">
+  </string-array>
+
+  <string-array name="spinner_list2">
+    <item>ANY</item>
     <item>TCP</item>
     <item>UDP</item>
-    <item>HTTP TCP port(80)</item>
     <item>IPV4</item>
     <item>IPV6</item>
+    <item>S Ip</item>
+    <item>D Ip</item>
+    <item>S Port</item>
+    <item>D Port</item>
   </string-array>
 
 
