@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_vertical">
+
+
+    <TextView
+        android:layout_width="14dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Medium Text"
+        android:id="@+id/txtItem" />
+
+    <Spinner
+        android:layout_width="83dp"
+        android:layout_height="50dp"
+        android:id="@+id/spinner_addaon"
+        android:entries="@array/spinner_list1" />
+
+    <Spinner
+        style="@style/Base.Widget.AppCompat.Spinner.Underlined"
+        android:layout_width="119dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/spinner_protocol2"
+        android:entries="@array/spinner_list2"
+        android:clickable="false" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPostalAddress"
+        android:ems="8"
+        android:id="@+id/editText_protocol2"
+        android:layout_below="@+id/linearLayout"
+        android:layout_weight="1" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="DEL"
+        android:id="@+id/btnremove"
+        android:layout_gravity="center_vertical" />
+</LinearLayout>

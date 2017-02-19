@@ -193,6 +193,7 @@ Your internet traffic is not being sent to a remote VPN server.</string>
 
   <string name="title_pro1">Capture for Condition</string>
   <string name="title_pro2">Capture for App</string>
+  <string name="title_pro3">Capture for another</string>
 
   <string-array name="themeNames">
     <item>藍綠 / 橙</item>
@@ -216,10 +217,10 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <item>UDP</item>
     <item>IPV4</item>
     <item>IPV6</item>
-    <item>S Ip</item>
-    <item>D Ip</item>
-    <item>S Port</item>
-    <item>D Port</item>
+    <item>SRC IP</item>
+    <item>DEST IP</item>
+    <item>SRC PORT</item>
+    <item>DEST PORT</item>
   </string-array>
 
 

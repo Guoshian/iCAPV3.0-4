@@ -156,7 +156,6 @@ public class ActivityPro1 extends AppCompatActivity {
 
 
 
-
         CheckBox_Other.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
             @Override

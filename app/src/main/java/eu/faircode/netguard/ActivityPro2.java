@@ -2,88 +2,116 @@ package eu.faircode.netguard;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ActivityPro2 extends AppCompatActivity {
 
     private Spinner Spinner,Spinner1,Spinner2;
 
-    private Button Enter;
+    private Button newList,confirm;
 
-    private EditText Text1, Text2;
+    private EditText Text, Text2, editIPandPORT;
+
+    LinearLayout pro2;
+
+    ArrayList<HashMap> objectList;
+
+    View buttonView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_activity_pro2);
 
+        buttonView = LayoutInflater.from(ActivityPro2.this).inflate(R.layout.activity_activity_pro2_object_button,null);
+
         Spinner = (Spinner) findViewById(R.id.spinner);
         Spinner1 = (Spinner) findViewById(R.id.spinner1);
         Spinner2 = (Spinner) findViewById(R.id.spinner2);
 
-        Text1 = (EditText) findViewById(R.id.editText);
+        Text = (EditText) findViewById(R.id.editText);
         Text2 = (EditText) findViewById(R.id.editText2);
         //Spinner2.setAdapter();
 
         Spinner.setOnItemSelectedListener(spinnerlistener);
-        Spinner2.setOnItemSelectedListener(spinnerlistener);
+        Spinner2.setOnItemSelectedListener(spinnerlistener2);
+
+
+        pro2 = (LinearLayout) findViewById(R.id.pro2);
+
+        newList = (Button)buttonView.findViewById(R.id.add);
+
+        confirm = (Button) findViewById(R.id.dialog_capture);
+
+
+        addListView();
+        setAction();
+
     }
 
 
     AdapterView.OnItemSelectedListener spinnerlistener = new AdapterView.OnItemSelectedListener(){
         @Override
         public void onItemSelected(AdapterView adapterView,View view,int position,long id){
-            TextView textView ;
+            TextView textView;
             //TextView textView = (adapterView.getId() == R.id.spinner)? Text1:Text2;
 
             if (adapterView.getId() == R.id.spinner)
-                textView = Text1;
-            else textView = Text2;
+                //textView = Text;
 
             switch (adapterView.getSelectedItemPosition()){
                 case 0:
-                    textView.setEnabled(false);
+                    Text.setEnabled(false);
                     break;
 
                 case 1:
-                    textView.setEnabled(false);
+                    Text.setEnabled(false);
+
                     break;
 
                 case 2:
-                    textView.setEnabled(false);
+                    Text.setEnabled(false);
+
+
                     break;
 
                 case 3:
-                    textView.setEnabled(false);
+                    Text.setEnabled(false);
+
                     break;
 
                 case 4:
-                    textView.setEnabled(false);
+                    Text.setEnabled(false);
                     break;
 
                 case 5:
-                    textView.setEnabled(true);
+                    Text.setEnabled(true);
                     break;
 
                 case 6:
-                    textView.setEnabled(true);
+                    Text.setEnabled(true);
                     break;
 
                 case 7:
-                    textView.setEnabled(true);
+                    Text.setEnabled(true);
                     break;
 
                 case 8:
-                    textView.setEnabled(true);
+                    Text.setEnabled(true);
                     break;
 
                 case 9:
-                    textView.setEnabled(true);
+                    Text.setEnabled(true);
                     break;
 
 
@@ -93,10 +121,71 @@ public class ActivityPro2 extends AppCompatActivity {
 
         }
 
+        @Override
+        public void onNothingSelected(AdapterView arg0){
+
+        }
+
+    };
 
 
 
+    AdapterView.OnItemSelectedListener spinnerlistener2 = new AdapterView.OnItemSelectedListener(){
+        @Override
+        public void onItemSelected(AdapterView adapterView,View view,int position,long id){
+            TextView textView ;
+            //TextView textView = (adapterView.getId() == R.id.spinner)? Text1:Text2;
 
+            if (adapterView.getId() == R.id.spinner2)
+                textView = Text2;
+
+            switch (adapterView.getSelectedItemPosition()){
+                case 0:
+                    Text2.setEnabled(false);
+                    break;
+
+                case 1:
+                    Text2.setEnabled(false);
+
+                    break;
+
+                case 2:
+                    Text2.setEnabled(false);
+
+                    break;
+
+                case 3:
+                    Text2.setEnabled(false);
+
+                    break;
+
+                case 4:
+                    Text2.setEnabled(false);
+                    break;
+
+                case 5:
+                    Text2.setEnabled(true);
+                    break;
+
+                case 6:
+                    Text2.setEnabled(true);
+                    break;
+
+                case 7:
+                    Text2.setEnabled(true);
+                    break;
+
+                case 8:
+                    Text2.setEnabled(true);
+                    break;
+
+                case 9:
+                    Text2.setEnabled(true);
+                    break;
+
+            }
+
+        }
 
         @Override
         public void onNothingSelected(AdapterView arg0){
@@ -109,22 +198,78 @@ public class ActivityPro2 extends AppCompatActivity {
 
 
 
-
-    /*private View.OnClickListener EnterOnClickListener = new View.OnClickListener(){
-
-    @Override
-    public void onClick(View v) {
-
-    String spin_array1[]= getResources().getStringArray(R.array.spinner_list1);
-    String spin_array2[]= getResources().getStringArray(R.array.spinner_list2);
+    public void addListView(){
+        objectList = new ArrayList<HashMap>();
+        int btnid=1;
+        pro2.removeAllViews();
 
 
+        for (int i=0;i<1;i++){
+
+            HashMap<String,EditText> editMap = new HashMap();
+
+            //View view = LayoutInflater.from(ActivityPro2.this).inflate(R.layout.activity_activity_pro2,null);
+            //LinearLayout III=(LinearLayout) view.findViewById(R.id.III);
+            //editIPandPORT = (EditText)III.findViewById(R.id.editText3);
+
+            View view = LayoutInflater.from(ActivityPro2.this).inflate(R.layout.activity_activity_pro2_object,null);
+            LinearLayout II=(LinearLayout) view.findViewById(R.id.II);
+
+            editIPandPORT = (EditText)II.findViewById(R.id.editText1);
+            editIPandPORT.setText("");
+
+            btnid++;
+
+            editMap.put("IP and PORT", editIPandPORT);
+            objectList.add(editMap);
+
+
+            pro2.addView(view);
+        }
+
+        pro2.addView(buttonView);
+    }
+
+
+    private void setAction(){
+
+
+        confirm.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+
+                //Log.i("msg","");
+
+                finish();
+
+            }
+
+        });
+
+        newList.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+
+
+
+               // editIPandPORT = (EditText)II.findViewById(R.id.editText1);
+               //Log.i("msg","新增");
+
+               for (HashMap<String,EditText> editMap:objectList){
+
+                   String ipandport = editMap.get("IP and PORT").getText().toString();
+
+               }
+               addListView();
+            }
+
+       });
 
 
     }
 
 
 
-    };*/
+
 
 }
