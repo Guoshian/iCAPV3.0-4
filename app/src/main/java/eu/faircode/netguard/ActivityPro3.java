@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -20,8 +21,9 @@ public class ActivityPro3 extends AppCompatActivity {
     private RecyclerView recycler_view;
     private MyAdapter adapter;
     private ArrayList<String> mData = new ArrayList<>();
-    private Spinner Spinner_protocol1;
+    private Spinner Spinner_protocol1,Spinner_protocol2;
     private EditText Text1;
+    private TextView Showtext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +32,8 @@ public class ActivityPro3 extends AppCompatActivity {
 
 
         Spinner_protocol1 = (Spinner) findViewById(R.id.spinner_protocol1);
+
+        Showtext = (TextView) findViewById(R.id.showtext);
 
         Text1 = (EditText) findViewById(R.id.editText_protocol1);
 
@@ -64,6 +68,19 @@ public class ActivityPro3 extends AppCompatActivity {
             }
         });
 
+        Text1.setOnKeyListener(new View.OnKeyListener() {
+
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                Showtext.setText( "Condition: "+ Spinner_protocol1.getSelectedItem().toString()+Text1.getText().toString());
+                //Showtext.setText(Text1.getText());
+                return false;
+
+
+            }
+
+
+        });
 
     }
 
@@ -80,52 +97,59 @@ public class ActivityPro3 extends AppCompatActivity {
                 switch (adapterView.getSelectedItemPosition()){
                     case 0:
                         Text1.setEnabled(false);
-
+                        Text1.setText("");
                         break;
 
                     case 1:
                         Text1.setEnabled(false);
+                        Text1.setText("");
                         break;
 
                     case 2:
                         Text1.setEnabled(false);
-
-
+                        Text1.setText("");
                         break;
 
                     case 3:
                         Text1.setEnabled(false);
-
+                        Text1.setText("");
                         break;
 
                     case 4:
                         Text1.setEnabled(false);
+                        Text1.setText("");
                         break;
 
                     case 5:
                         Text1.setEnabled(true);
+                        Text1.setText("");
                         break;
 
                     case 6:
                         Text1.setEnabled(true);
+                        Text1.setText("");
                         break;
 
                     case 7:
                         Text1.setEnabled(true);
+                        Text1.setText("");
                         break;
 
                     case 8:
                         Text1.setEnabled(true);
+                        Text1.setText("");
                         break;
 
                     case 9:
                         Text1.setEnabled(true);
+                        Text1.setText("");
                         break;
+
 
 
                 }
 
-
+            Showtext.setText("Condition: "+ Spinner_protocol1.getSelectedItem().toString()+Text1.getText().toString());
 
         }
 

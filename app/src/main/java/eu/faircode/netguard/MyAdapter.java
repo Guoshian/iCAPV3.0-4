@@ -42,7 +42,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             Spinner_protocol2.setOnItemSelectedListener(spinnerlistener2);
 
 
-
             Btnremove.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -74,7 +73,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
                     case 1:
                         Text2.setEnabled(false);
-
                         break;
 
                     case 2:
