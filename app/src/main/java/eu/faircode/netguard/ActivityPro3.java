@@ -82,9 +82,21 @@ public class ActivityPro3 extends AppCompatActivity {
 
                 String protocol1 = Spinner_protocol1.getSelectedItem().toString();
                 String iporport1 = Text1.getText().toString();
+                String ip1="",port1="";
+
+                int x=iporport1.length();
+
+                if (x >6) {
+                     ip1 = iporport1;
+                     port1 = " ";
+                }
+                else if (x <6) {
+                     port1 = iporport1;
+                     ip1 = " ";
+                }
 
 
-                Showtext1.setText( "Condition: "+ protocol1 +"  "+iporport1 );
+                Showtext1.setText( "Condition: "+ protocol1 +"  "+ip1 + port1 );
                 //Showtext.setText(Text1.getText());
                 return false;
 

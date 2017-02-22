@@ -73,10 +73,27 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
                         String protocol2 = Spinner_protocol2.getSelectedItem().toString();
                         String iporport2 = Text2.getText().toString();
 
-                        Toast.makeText(view.getContext(), "click  " + aon + " " + protocol2 + " " + iporport2, Toast.LENGTH_SHORT).show();
+                        String ip2="",port2="";
 
-                        String msg0 = "123456";
-                        EventBus.getDefault().post(new MessageEvent(aon + " " + protocol2 + " " + iporport2));
+                        int y=iporport2.length();
+
+                        if (y >6) {
+                            ip2 = iporport2;
+                            port2 = " ";
+                        }
+                        else if (y <6) {
+                            port2 = iporport2;
+                            ip2= " ";
+                        }
+
+
+
+
+
+                        Toast.makeText(view.getContext(), "click  " + aon + " " + protocol2 + " " + ip2 + port2, Toast.LENGTH_SHORT).show();
+
+
+                        EventBus.getDefault().post(new MessageEvent(aon + " " + protocol2 + " " + ip2 + port2));
 
 
                     }
