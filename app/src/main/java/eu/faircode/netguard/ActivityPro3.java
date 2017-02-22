@@ -13,6 +13,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
 
 public class ActivityPro3 extends AppCompatActivity {
@@ -23,7 +27,7 @@ public class ActivityPro3 extends AppCompatActivity {
     private ArrayList<String> mData = new ArrayList<>();
     private Spinner Spinner_protocol1,Spinner_protocol2;
     private EditText Text1;
-    private TextView Showtext;
+    private TextView Showtext1,Showtext2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,17 +37,18 @@ public class ActivityPro3 extends AppCompatActivity {
 
         Spinner_protocol1 = (Spinner) findViewById(R.id.spinner_protocol1);
 
-        Showtext = (TextView) findViewById(R.id.showtext);
-
+        Showtext1 = (TextView) findViewById(R.id.showtext1);
+        //TextViewtest = (TextView) findViewById(R.id.textViewtest);
+        Showtext2 = (TextView) findViewById(R.id.showtext2);
         Text1 = (EditText) findViewById(R.id.editText_protocol1);
 
-        Spinner_protocol1.setOnItemSelectedListener(spinnerlistener1);
+        Spinner_protocol1.setOnItemSelectedListener(spinner_listener1);
 
         Add_condition = (Button) findViewById(R.id.add_condition);
 
         //for (int i=0;i<10;i++){}
 
-        mData.add("");
+        //mData.add("");
 
 
         recycler_view = (RecyclerView) findViewById(R.id.recycler_view);
@@ -68,11 +73,18 @@ public class ActivityPro3 extends AppCompatActivity {
             }
         });
 
+
+
         Text1.setOnKeyListener(new View.OnKeyListener() {
 
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                Showtext.setText( "Condition: "+ Spinner_protocol1.getSelectedItem().toString()+Text1.getText().toString());
+
+                String protocol1 = Spinner_protocol1.getSelectedItem().toString();
+                String iporport1 = Text1.getText().toString();
+
+
+                Showtext1.setText( "Condition: "+ protocol1 +"  "+iporport1 );
                 //Showtext.setText(Text1.getText());
                 return false;
 
@@ -82,10 +94,35 @@ public class ActivityPro3 extends AppCompatActivity {
 
         });
 
+        //TextViewtest.setText("choose" );
+
+
+
+
+
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(MyAdapter.MessageEvent event){
 
-    AdapterView.OnItemSelectedListener spinnerlistener1 = new AdapterView.OnItemSelectedListener(){
+       // String msg1= "choose" + event.getMessage().toString();
+
+               // Showtext.setText("choose" + event.getMessage().toString());
+
+        Showtext2.setText( event.getMessage().toString() );
+
+    };
+
+
+
+
+
+
+
+
+
+
+    AdapterView.OnItemSelectedListener spinner_listener1 = new AdapterView.OnItemSelectedListener(){
         @Override
         public void onItemSelected(AdapterView adapterView,View view,int position,long id){
             TextView textView;
@@ -110,13 +147,14 @@ public class ActivityPro3 extends AppCompatActivity {
                         Text1.setText("");
                         break;
 
+
                     case 3:
-                        Text1.setEnabled(false);
+                        Text1.setEnabled(true);
                         Text1.setText("");
                         break;
 
                     case 4:
-                        Text1.setEnabled(false);
+                        Text1.setEnabled(true);
                         Text1.setText("");
                         break;
 
@@ -130,26 +168,13 @@ public class ActivityPro3 extends AppCompatActivity {
                         Text1.setText("");
                         break;
 
-                    case 7:
-                        Text1.setEnabled(true);
-                        Text1.setText("");
-                        break;
-
-                    case 8:
-                        Text1.setEnabled(true);
-                        Text1.setText("");
-                        break;
-
-                    case 9:
-                        Text1.setEnabled(true);
-                        Text1.setText("");
-                        break;
-
 
 
                 }
 
-            Showtext.setText("Condition: "+ Spinner_protocol1.getSelectedItem().toString()+Text1.getText().toString());
+
+            String protocol1 = Spinner_protocol1.getSelectedItem().toString();
+            Showtext1.setText("Condition: "+ protocol1);
 
         }
 
@@ -160,6 +185,24 @@ public class ActivityPro3 extends AppCompatActivity {
 
     };
 
+
+
+    @Override
+    public void onStart(){
+        super.onStart();
+
+        EventBus.getDefault().register(this);
+
+    }
+
+
+    @Override
+    public void onStop(){
+        super.onStop();
+
+        EventBus.getDefault().unregister(this);
+
+    }
 
 
 
@@ -178,4 +221,25 @@ public class ActivityPro3 extends AppCompatActivity {
             }
         });
     }
+
+
+   /* public class MessageEvent{
+
+        private String Message;
+
+        public MessageEvent(String message){
+
+            this.Message = message;
+
+        }
+
+        public String getMessage(){
+
+            return Message;
+
+        }
+    }*/
+
+
+
 }

@@ -215,12 +215,10 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <item>ANY</item>
     <item>TCP</item>
     <item>UDP</item>
-    <item>IPV4</item>
-    <item>IPV6</item>
-    <item>SRC IP</item>
-    <item>DEST IP</item>
-    <item>SRC PORT</item>
-    <item>DEST PORT</item>
+    <item>SRC IP :</item>
+    <item>DEST IP :</item>
+    <item>SRC PORT :</item>
+    <item>DEST PORT :</item>
   </string-array>
 
 
