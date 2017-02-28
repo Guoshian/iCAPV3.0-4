@@ -2,6 +2,7 @@ package eu.faircode.netguard;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
@@ -22,9 +23,11 @@ import java.util.ArrayList;
 public class ActivityPro3 extends AppCompatActivity {
 
     private Button Add_condition;
-    private RecyclerView recycler_view;
+    private RecyclerView recycler_view,recycler_view_textview;
     private MyAdapter adapter;
+    private MyAdapter2 adapter2;
     private ArrayList<String> mData = new ArrayList<>();
+    private ArrayList<String> mData2 = new ArrayList<>();
     private Spinner Spinner_protocol1,Spinner_protocol2;
     private EditText Text1;
     private TextView Showtext1,Showtext2;
@@ -46,21 +49,26 @@ public class ActivityPro3 extends AppCompatActivity {
 
         Add_condition = (Button) findViewById(R.id.add_condition);
 
-        //for (int i=0;i<10;i++){}
-
-        //mData.add("");
-
-
         recycler_view = (RecyclerView) findViewById(R.id.recycler_view);
 
         recycler_view.setLayoutManager(new LinearLayoutManager(this));
 
+        recycler_view_textview = (RecyclerView) findViewById(R.id.recycler_view_textview);
+
+        recycler_view_textview.setLayoutManager(new LinearLayoutManager(this));
+
+
         //recycler_view.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
 
-        adapter = new MyAdapter(mData);
+        adapter = new MyAdapter(mData, recycler_view);
 
         recycler_view.setAdapter(adapter);
+
+        adapter2 = new MyAdapter2(mData2);
+
+        recycler_view_textview.setAdapter(adapter2);
+
 
 
         Add_condition.setOnClickListener(new View.OnClickListener() {
@@ -69,8 +77,29 @@ public class ActivityPro3 extends AppCompatActivity {
             public void onClick(View view) {
 
                 adapter.addItem("");
+                adapter2.addItem("");
+
+                //adapter2.addItem(event.getMessage().toString());
+               // adapter2.addItem( event.getMessage().toString() );
+                //adapter2.notifyDataSetChanged();
+
+
+                //listView.setAdapter(adapter);
+                //adapter.notifyDataSetChanged();
+                //adapter2.notifyDataSetChanged();
+
+
+
+
+
+
 
             }
+
+
+
+
+
         });
 
 
@@ -121,13 +150,13 @@ public class ActivityPro3 extends AppCompatActivity {
 
                // Showtext.setText("choose" + event.getMessage().toString());
 
+
         Showtext2.setText( event.getMessage().toString() );
 
+        //return event.getMessage().toString();
+        adapter.notifyDataSetChanged();
+        adapter2.notifyDataSetChanged();
     };
-
-
-
-
 
 
 
@@ -228,7 +257,7 @@ public class ActivityPro3 extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                adapter.addItem("new item");
+              //  adapter.addItem("new item");
 
             }
         });

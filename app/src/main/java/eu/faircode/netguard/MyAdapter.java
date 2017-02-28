@@ -24,12 +24,17 @@ import java.util.List;
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
     private List<String> mData;
+    private RecyclerView mRecycleView;
 
-    MyAdapter(List<String> data) {mData = data;}
+    MyAdapter(List<String> data, RecyclerView recycler_view) {
+        mData = data;
+        mRecycleView = recycler_view;
+    }
     int add = 0;
 
     class ViewHolder extends RecyclerView.ViewHolder{
 
+        private View itemView;
         private TextView txtItem,Text2;
         private Spinner Spinner_addaon,Spinner_protocol2;//
         private Button Btnremove;
@@ -37,8 +42,9 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
 
         ViewHolder(View itemView){
-
             super(itemView);
+            this.itemView = itemView;
+
             txtItem = (TextView) itemView.findViewById(R.id.txtItem);
 
             Spinner_addaon = (Spinner) itemView.findViewById(R.id.spinner_addaon);
@@ -86,9 +92,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
                             ip2= " ";
                         }
 
-
-
-
+                        // TODO event, update mdata
 
                         Toast.makeText(view.getContext(), "click  " + aon + " " + protocol2 + " " + ip2 + port2, Toast.LENGTH_SHORT).show();
 
@@ -201,8 +205,14 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
                 }
 
                 String aon = Spinner_addaon.getSelectedItem().toString();
-                String protocol2 = Spinner_protocol2.getSelectedItem().toString();
-                EventBus.getDefault().post(new MessageEvent(aon+" "+protocol2));
+                String prodtocol2 = Spinner_protocol2.getSelectedItem().toString();
+
+
+                int pos = mRecycleView.indexOfChild(itemView);
+                // TODO event, update mdata
+                // mData[position].ff = ffff;
+
+                EventBus.getDefault().post(new MessageEvent(aon+" "+prodtocol2));/////
                 //Text2.setText("Condition: "+ Spinner_protocol2.getSelectedItem().toString());
 
             }
@@ -227,7 +237,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
 
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item,parent,false);
-
         return new ViewHolder(view);
     }
 
@@ -250,7 +259,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
     public void addItem(String text){
 
-        mData.add (add,text);
+        mData.add(add, text);
         notifyItemInserted(add);
         add++;
     }

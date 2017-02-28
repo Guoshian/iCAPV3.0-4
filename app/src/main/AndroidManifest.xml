@@ -144,20 +144,33 @@
             android:label="@string/title_pro2"
             android:parentActivityName=".ActivityMain" />
 
-            <meta-data
+        <meta-data
             android:name="android.support.PARENT_ACTIVITY"
             android:value=".ActivityMain" />
 
-        <activity android:name=".ActivityPro3"
+        <activity
+            android:name=".ActivityPro3"
             android:configChanges="orientation|screenSize"
             android:label="@string/title_pro3"
             android:parentActivityName=".ActivityMain">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ActivityMain" />
+        </activity>
+
+        <activity
+            android:name=".ActivityPro4"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/title_pro4"
+            android:parentActivityName=".ActivityMain">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ActivityMain"/>
 
 
         </activity>
+
+
     </application>
 
 </manifest>

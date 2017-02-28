@@ -13,8 +13,8 @@
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/add_condition"
-        android:layout_below="@+id/editText_protocol1" />
+        android:layout_below="@+id/spinner_protocol1"
+        android:layout_above="@+id/add_condition" />
 
 
 
@@ -26,7 +26,7 @@
         android:entries="@array/spinner_list2"
         android:clickable="false"
         android:layout_weight="0.55"
-        android:layout_above="@+id/recycler_view"
+        android:layout_alignTop="@+id/editText_protocol1"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
@@ -35,10 +35,10 @@
         android:layout_height="wrap_content"
         android:inputType="textPostalAddress"
         android:id="@+id/editText_protocol1"
-        android:layout_marginTop="75dp"
-        android:layout_alignParentTop="true"
+        android:layout_marginTop="64dp"
         android:layout_toRightOf="@+id/spinner_protocol1"
-        android:layout_toEndOf="@+id/spinner_protocol1" />
+        android:layout_toEndOf="@+id/spinner_protocol1"
+        android:layout_below="@+id/showtext2" />
 
 
     <Button
@@ -48,7 +48,8 @@
         android:id="@+id/add_condition"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_alignTop="@+id/button2" />
 
 
     <Button
@@ -69,15 +70,26 @@
         android:id="@+id/showtext1"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_toLeftOf="@+id/showtext2"
+        android:layout_toStartOf="@+id/showtext2" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:id="@+id/showtext2"
+        android:text="123"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/showtext1"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_above="@+id/spinner_protocol1" />
 
 </RelativeLayout>
