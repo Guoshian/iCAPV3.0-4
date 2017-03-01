@@ -30,7 +30,7 @@
 
     <Button
         style="?android:attr/buttonStyleSmall"
-        android:layout_width="100dp"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:text="CLEAR"
         android:id="@+id/clear_button"
@@ -48,8 +48,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/sp_aon"
-        android:entries="@array/spinner_list1"
+        android:entries="@array/spinner_list2"
         android:layout_alignTop="@+id/sp_protocol2"
+        android:spinnerMode="dialog"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignBottom="@+id/sp_protocol2"
@@ -60,32 +61,34 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/sp_protocol2"
-        android:entries="@array/spinner_list2"
+        android:entries="@array/spinner_list1"
+        android:spinnerMode="dialog"
         android:layout_below="@+id/ipport_1"
-        android:layout_toRightOf="@+id/sp_aon"
-        android:layout_alignBottom="@+id/ipport_2"
         android:layout_alignRight="@+id/clear_button"
-        android:layout_alignEnd="@+id/clear_button" />
+        android:layout_alignEnd="@+id/clear_button"
+        android:layout_alignBottom="@+id/ipport_2"
+        android:layout_toRightOf="@+id/sp_aon"
+        android:layout_toEndOf="@+id/sp_aon" />
 
     <Spinner
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/sp_protocol1"
-        android:entries="@array/spinner_list2"
+        android:entries="@array/spinner_list1"
+        android:spinnerMode="dialog"
         android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_toLeftOf="@+id/sp_protocol2"
-        android:layout_toStartOf="@+id/sp_protocol2"
-        android:layout_alignBottom="@+id/ipport_1" />
+        android:layout_alignBottom="@+id/ipport_1"
+        android:layout_toRightOf="@+id/sp_aon"
+        android:layout_alignRight="@+id/sp_protocol2"
+        android:layout_alignEnd="@+id/sp_protocol2" />
 
     <EditText
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/ipport_2"
         android:layout_below="@+id/ipport_1"
-        android:layout_alignParentRight="true"
-        android:layout_toEndOf="@+id/sp_protocol2" />
+        android:layout_toEndOf="@+id/sp_protocol2"
+        android:layout_toRightOf="@+id/sp_protocol2" />
 
 
 </RelativeLayout>

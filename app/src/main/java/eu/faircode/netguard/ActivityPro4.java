@@ -17,6 +17,7 @@ public class ActivityPro4 extends AppCompatActivity {
     Button add,clear;
     ListView listview;
     ArrayAdapter<String> MyArrayAdapter;
+    ArrayAdapter<CharSequence> adapter_spinner_list1,adapter_spinner_list2;
     Spinner Spinner_0,Spinner_1,Spinner_2;
     int position=0;
 
@@ -24,6 +25,10 @@ public class ActivityPro4 extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_activity_pro4);
+
+        adapter_spinner_list1 = ArrayAdapter.createFromResource(this, R.array.spinner_list1, R.layout.spinnertest);
+        adapter_spinner_list2 = ArrayAdapter.createFromResource(this, R.array.spinner_list2, R.layout.spinnertest);
+
 
         Spinner_0 = (Spinner) findViewById(R.id.sp_protocol1);
         Spinner_0.setOnItemSelectedListener(spinner_listener_protocol);
@@ -33,6 +38,17 @@ public class ActivityPro4 extends AppCompatActivity {
 
         Spinner_2 = (Spinner) findViewById(R.id.sp_protocol2);
         Spinner_2.setOnItemSelectedListener(spinner_listener_protocol);
+
+        adapter_spinner_list1.setDropDownViewResource(android.R.layout.simple_list_item_single_choice);
+        adapter_spinner_list2.setDropDownViewResource(android.R.layout.simple_list_item_single_choice);
+
+        Spinner_0.setPrompt("Choose Protocol or Ip");
+        Spinner_0.setAdapter(adapter_spinner_list1);
+        Spinner_1.setPrompt("Choose Condition");
+        Spinner_1.setAdapter(adapter_spinner_list2);
+        Spinner_2.setPrompt("Choose Protocol or Ip");
+        Spinner_2.setAdapter(adapter_spinner_list1);
+
 
         input1 = (EditText) findViewById(R.id.ipport_1);
         input2 = (EditText) findViewById(R.id.ipport_2);
@@ -111,7 +127,7 @@ public class ActivityPro4 extends AppCompatActivity {
                         break;
 
                     case 2:
-                        textView.setEnabled(false);
+                        textView.setEnabled(true);
                         textView.setText("");
                         break;
 
@@ -131,10 +147,6 @@ public class ActivityPro4 extends AppCompatActivity {
                         textView.setText("");
                         break;
 
-                    case 6:
-                        textView.setEnabled(true);
-                        textView.setText("");
-                        break;
 
 
                 }

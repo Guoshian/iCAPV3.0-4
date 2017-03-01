@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -25,7 +26,7 @@ public class ActivityPro2 extends AppCompatActivity {
     LinearLayout pro2;
 
     ArrayList<HashMap> objectList;
-
+    ArrayAdapter<CharSequence> adapter;
     View buttonView;
 
     @Override
@@ -33,17 +34,27 @@ public class ActivityPro2 extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_activity_pro2);
 
-        buttonView = LayoutInflater.from(ActivityPro2.this).inflate(R.layout.activity_activity_pro2_object_button,null);
+        buttonView = LayoutInflater.from(ActivityPro2.this).inflate(R.layout.activity_activity_pro2_object_button, null);
+
+
+        adapter = ArrayAdapter.createFromResource(this, R.array.spinner_list2, R.layout.spinnertest);
 
         Spinner = (Spinner) findViewById(R.id.spinner);
-        Spinner1 = (Spinner) findViewById(R.id.spinner1);
-        Spinner2 = (Spinner) findViewById(R.id.spinner2);
+        Spinner.setOnItemSelectedListener(spinnerlistener);
+        adapter.setDropDownViewResource(android.R.layout.simple_list_item_single_choice);
+        //adapter.setDropDownViewResource(R.layout.spinnertest);
+        Spinner.setPrompt("Choose Protocol or Ip");
+        Spinner.setAdapter(adapter);
+
+
 
         Text = (EditText) findViewById(R.id.editText);
         Text2 = (EditText) findViewById(R.id.editText2);
-        //Spinner2.setAdapter();
 
-        Spinner.setOnItemSelectedListener(spinnerlistener);
+        Spinner1 = (Spinner) findViewById(R.id.spinner1);
+
+        Spinner2 = (Spinner) findViewById(R.id.spinner2);
+        Spinner2.setAdapter(adapter);
         Spinner2.setOnItemSelectedListener(spinnerlistener2);
 
 
@@ -52,6 +63,10 @@ public class ActivityPro2 extends AppCompatActivity {
         newList = (Button)buttonView.findViewById(R.id.add);
 
         confirm = (Button) findViewById(R.id.dialog_capture);
+
+
+
+
 
 
         addListView();
