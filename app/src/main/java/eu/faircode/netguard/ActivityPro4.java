@@ -143,7 +143,7 @@ public class ActivityPro4 extends AppCompatActivity {
                         textView.setEnabled(false);
                         textView.setText("");
 
-                        setpcap(0);
+                        setprotocol(0);
 
                         break;
 
@@ -151,7 +151,7 @@ public class ActivityPro4 extends AppCompatActivity {
                         textView.setEnabled(false);
                         textView.setText("");
 
-                        setpcap(1);
+                        setprotocol(1);
 
                         break;
 
@@ -200,7 +200,7 @@ public class ActivityPro4 extends AppCompatActivity {
             String newInput ="";
 
             if (position ==1)
-            newInput = Spinner_0.getSelectedItem().toString() +"  " + input1.getText().toString();
+            newInput = Spinner_0.getSelectedItem().toString() +"  "+ input1.getText().toString();
 
             else if (position >1)
             newInput = Spinner_1.getSelectedItem().toString() +"  "+ Spinner_2.getSelectedItem().toString() + input2.getText().toString();
@@ -224,7 +224,7 @@ public class ActivityPro4 extends AppCompatActivity {
 
 
 
-    private void setpcap(final int pro){
+    private void setprotocol(final int pro){
 
         capture.setOnClickListener(new Button.OnClickListener() {
 
