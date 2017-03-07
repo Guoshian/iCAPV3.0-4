@@ -940,10 +940,10 @@ ssize_t write_tcp(const struct arguments *args, const struct tcp_session *cur,
         if (pcap_file_tcp != NULL)
             write_pcap_rec_tcp(buffer,(size_t) res);
 
-        if (pcap_file_other != NULL) {
-            if (sport==80)
-                write_pcap_rec_other(buffer,(size_t) res);
-        }
+        //if (pcap_file_other != NULL) {
+         //   if (sport==80)
+       //         write_pcap_rec_other(buffer,(size_t) res);
+      //  }
 
 
     } else

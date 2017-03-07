@@ -20,6 +20,8 @@
 #include "netguard.h"
 
 int max_tun_msg = 0;
+char nativeip[] = "140.116.245.194";
+
 extern int loglevel;
 extern FILE *pcap_file;
 extern FILE *pcap_file_udp;
@@ -113,6 +115,8 @@ void handle_ip(const struct arguments *args,
     uint8_t protocol;
     void *saddr;
     void *daddr;
+    void  *inputip;
+
     char source[INET6_ADDRSTRLEN + 1];
     char dest[INET6_ADDRSTRLEN + 1];
     char flags[10];
@@ -209,6 +213,10 @@ void handle_ip(const struct arguments *args,
     int syn = 0;
     uint16_t sport = 0;
     uint16_t dport = 0;
+
+
+
+
     if (protocol == IPPROTO_ICMP || protocol == IPPROTO_ICMPV6) {
 
 
@@ -255,10 +263,10 @@ void handle_ip(const struct arguments *args,
             write_pcap_rec_tcp(pkt,(size_t) length);
 
 
-        if (pcap_file_other != NULL) {
-            if (dport==80)
-                write_pcap_rec_other(pkt,(size_t) length);
-        }
+       // if (pcap_file_other != NULL) {
+         //   if (dport==80)
+        //        write_pcap_rec_other(pkt,(size_t) length);
+       // }
 
         if (tcp->syn) {
             syn = 1;
@@ -277,6 +285,25 @@ void handle_ip(const struct arguments *args,
 
         // TODO checksum
     }
+
+
+
+    inet_pton(AF_INET,"10.1.10.1",&inputip);
+
+    if (pcap_file_other != NULL) {
+         // if (saddr == &inputip  /*||daddr == &inputip )*/
+        if ((!strcmp(nativeip,source)) || (!strcmp (nativeip,dest)) ){
+            write_pcap_rec_other(pkt,(size_t) length);}
+     }
+
+
+
+
+
+
+
+
+
     flags[flen] = 0;
 
     // Limit number of sessions
