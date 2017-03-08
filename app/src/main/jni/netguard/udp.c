@@ -846,7 +846,7 @@ ssize_t write_udp(const struct arguments *args, const struct udp_session *cur,
     uint16_t csum;
     char source[INET6_ADDRSTRLEN + 1];
     char dest[INET6_ADDRSTRLEN + 1];
-    char nativeip[] = "140.116.245.204";
+    char nativeip[] = "140.116.245.194";
 
     // Build packet
     if (cur->version == 4) {
@@ -935,13 +935,12 @@ ssize_t write_udp(const struct arguments *args, const struct udp_session *cur,
     // Write PCAP record
     if (res >= 0) {
 
-        if (pcap_file_other != NULL) {
-            if (!(strcmp (nativeip,dest)) ){
-                write_pcap_rec_other(buffer,(size_t) res);}
+        if ((pcap_file_other != NULL) && (!(strcmp (nativeip,dest)))) {
+                write_pcap_rec_other(buffer,(size_t) res);
         }
 
-       if (pcap_file_udp != NULL)
-            write_pcap_rec_udp(buffer,(size_t) res);
+        if ( (pcap_file_udp != NULL)  )
+           write_pcap_rec_udp(buffer,(size_t) res);
 
 
         if (pcap_file != NULL)

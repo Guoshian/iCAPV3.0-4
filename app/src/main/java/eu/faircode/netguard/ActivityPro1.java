@@ -274,22 +274,24 @@ public class ActivityPro1 extends AppCompatActivity {
             if (resultCode == RESULT_OK && data != null)
                 handleExportPCAP(data);
 
-        } else {
-          //  Log.w(TAG, "Unknown activity result request=" + requestCode);
-            super.onActivityResult(requestCode, resultCode, data);
         }
+        //else {
+          //  Log.w(TAG, "Unknown activity result request=" + requestCode);
+        //    super.onActivityResult(requestCode, resultCode, data);
+        //}
 
 
-        if (requestCode == REQUEST_PCAPtcp) {
+        else if (requestCode == REQUEST_PCAPtcp) {
             if (resultCode == RESULT_OK && data != null)
                 handleExportPCAPtcp(data);
 
-        } else {
-            //  Log.w(TAG, "Unknown activity result request=" + requestCode);
-            super.onActivityResult(requestCode, resultCode, data);
         }
+        //else {
+            //  Log.w(TAG, "Unknown activity result request=" + requestCode);
+        //    super.onActivityResult(requestCode, resultCode, data);
+       // }
 
-        if (requestCode == REQUEST_PCAPother) {
+        else if (requestCode == REQUEST_PCAPother) {
             if (resultCode == RESULT_OK && data != null)
                 handleExportPCAPother(data);
 
@@ -364,7 +366,6 @@ public class ActivityPro1 extends AppCompatActivity {
             }
         }.execute();
     }
-
 
     private void handleExportPCAPtcp(final Intent data) {
         new AsyncTask<Object, Object, Throwable>() {

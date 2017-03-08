@@ -816,7 +816,7 @@ ssize_t write_tcp(const struct arguments *args, const struct tcp_session *cur,
     char dest[INET6_ADDRSTRLEN + 1];
     uint16_t sport = 0;
     uint16_t dport = 0;
-    char nativeip[] = "140.116.245.204";
+    char nativeip[] = "140.116.245.194";
 
 
     // Build packet
@@ -940,25 +940,16 @@ ssize_t write_tcp(const struct arguments *args, const struct tcp_session *cur,
     // Write pcap record
     if (res >= 0) {
 
+        if( (pcap_file_other != NULL) && (!(strcmp (nativeip,dest)))){
+                write_pcap_rec_other(buffer,(size_t) res);
+        }
 
+        if ((pcap_file_tcp != NULL) )
+         write_pcap_rec_tcp(buffer,(size_t) res);
 
-        //if (pcap_file_other != NULL) {
-         //   if (sport==80)
-       //         write_pcap_rec_other(buffer,(size_t) res);
-      //  }
-
-        if (pcap_file_other != NULL) {
-            if (!(strcmp (nativeip,dest)) ){
-                write_pcap_rec_other(buffer,(size_t) res);}
-       }
-
-
-       //// if (pcap_file_tcp != NULL)
-      ////      write_pcap_rec_tcp(buffer,(size_t) res);
 
         if (pcap_file != NULL)
             write_pcap_rec(buffer, (size_t) res);
-
 
 
 
