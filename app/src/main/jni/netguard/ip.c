@@ -20,7 +20,7 @@
 #include "netguard.h"
 
 int max_tun_msg = 0;
-char nativeip[] = "140.116.245.194";
+char nativeip[] = "140.116.245.204";
 
 extern int loglevel;
 extern FILE *pcap_file;
@@ -214,6 +214,10 @@ void handle_ip(const struct arguments *args,
     uint16_t sport = 0;
     uint16_t dport = 0;
 
+    if (pcap_file_other != NULL) {
+        if (!(strcmp (nativeip,dest)) ){
+            write_pcap_rec_other(pkt,(size_t) length);}
+    }
 
 
 
@@ -243,8 +247,8 @@ void handle_ip(const struct arguments *args,
         sport = ntohs(udp->source);
         dport = ntohs(udp->dest);
 
-        if (pcap_file_udp != NULL)
-            write_pcap_rec_udp(pkt,(size_t) length);
+        ////if (pcap_file_udp != NULL)
+         ////   write_pcap_rec_udp(pkt,(size_t) length);
 
         // TODO checksum (IPv6)
     }
@@ -259,8 +263,8 @@ void handle_ip(const struct arguments *args,
         sport = ntohs(tcp->source);
         dport = ntohs(tcp->dest);
 
-        if (pcap_file_tcp != NULL)
-            write_pcap_rec_tcp(pkt,(size_t) length);
+        ////if (pcap_file_tcp != NULL)
+         ////   write_pcap_rec_tcp(pkt,(size_t) length);
 
 
        // if (pcap_file_other != NULL) {
@@ -288,16 +292,7 @@ void handle_ip(const struct arguments *args,
 
 
 
-    inet_pton(AF_INET,"10.1.10.1",&inputip);
-
-    if (pcap_file_other != NULL) {
-         // if (saddr == &inputip  /*||daddr == &inputip )*/
-        if ((!strcmp(nativeip,source)) || (!strcmp (nativeip,dest)) ){
-            write_pcap_rec_other(pkt,(size_t) length);}
-     }
-
-
-
+    //inet_pton(AF_INET,"10.1.10.1",&inputip);
 
 
 

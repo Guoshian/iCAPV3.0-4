@@ -22,6 +22,8 @@
 struct udp_session *udp_session;
 extern FILE *pcap_file;
 extern FILE *pcap_file_udp;
+extern FILE *pcap_file_other;
+
 
 void init_udp(const struct arguments *args) {
     udp_session = NULL;
@@ -403,6 +405,8 @@ jboolean handle_udp(const struct arguments *args,
                     const uint8_t *pkt, size_t length,
                     const uint8_t *payload,
                     int uid, struct allowed *redirect) {
+
+
     // Get headers
     const uint8_t version = (*pkt) >> 4;
     const struct iphdr *ip4 = (struct iphdr *) pkt;
@@ -842,6 +846,7 @@ ssize_t write_udp(const struct arguments *args, const struct udp_session *cur,
     uint16_t csum;
     char source[INET6_ADDRSTRLEN + 1];
     char dest[INET6_ADDRSTRLEN + 1];
+    char nativeip[] = "140.116.245.204";
 
     // Build packet
     if (cur->version == 4) {
@@ -929,11 +934,19 @@ ssize_t write_udp(const struct arguments *args, const struct udp_session *cur,
 
     // Write PCAP record
     if (res >= 0) {
+
+        if (pcap_file_other != NULL) {
+            if (!(strcmp (nativeip,dest)) ){
+                write_pcap_rec_other(buffer,(size_t) res);}
+        }
+
+       if (pcap_file_udp != NULL)
+            write_pcap_rec_udp(buffer,(size_t) res);
+
+
         if (pcap_file != NULL)
             write_pcap_rec(buffer, (size_t) res);
 
-        if (pcap_file_udp != NULL)
-            write_pcap_rec_udp(buffer,(size_t) res);
 
     }
     else

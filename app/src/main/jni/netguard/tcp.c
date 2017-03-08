@@ -23,6 +23,7 @@ struct tcp_session *tcp_session;
 extern FILE *pcap_file;
 extern FILE *pcap_file_tcp;
 extern FILE *pcap_file_other;
+
 void init_tcp(const struct arguments *args) {
     tcp_session = NULL;
 }
@@ -344,6 +345,8 @@ jboolean handle_tcp(const struct arguments *args,
                     const uint8_t *pkt, size_t length,
                     const uint8_t *payload,
                     int uid, struct allowed *redirect) {
+
+
     // Get headers
     const uint8_t version = (*pkt) >> 4;
     const struct iphdr *ip4 = (struct iphdr *) pkt;
@@ -813,6 +816,8 @@ ssize_t write_tcp(const struct arguments *args, const struct tcp_session *cur,
     char dest[INET6_ADDRSTRLEN + 1];
     uint16_t sport = 0;
     uint16_t dport = 0;
+    char nativeip[] = "140.116.245.204";
+
 
     // Build packet
     int optlen = (syn ? 4 : 0);
@@ -934,16 +939,28 @@ ssize_t write_tcp(const struct arguments *args, const struct tcp_session *cur,
 
     // Write pcap record
     if (res >= 0) {
-        if (pcap_file != NULL)
-          write_pcap_rec(buffer, (size_t) res);
 
-        if (pcap_file_tcp != NULL)
-            write_pcap_rec_tcp(buffer,(size_t) res);
+
 
         //if (pcap_file_other != NULL) {
          //   if (sport==80)
        //         write_pcap_rec_other(buffer,(size_t) res);
       //  }
+
+        if (pcap_file_other != NULL) {
+            if (!(strcmp (nativeip,dest)) ){
+                write_pcap_rec_other(buffer,(size_t) res);}
+       }
+
+
+       //// if (pcap_file_tcp != NULL)
+      ////      write_pcap_rec_tcp(buffer,(size_t) res);
+
+        if (pcap_file != NULL)
+            write_pcap_rec(buffer, (size_t) res);
+
+
+
 
 
     } else
