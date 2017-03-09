@@ -20,7 +20,7 @@
 #include "netguard.h"
 
 int max_tun_msg = 0;
-char nativeip[] = "140.116.245.194";
+
 
 extern int loglevel;
 extern FILE *pcap_file;
@@ -30,7 +30,11 @@ extern FILE *pcap_file_other;
 
 int check_tun(const struct arguments *args,
               fd_set *rfds, fd_set *wfds, fd_set *efds,
-              int sessions, int maxsessions) {
+              int sessions, int maxsessions, char *nativeip) {
+
+
+
+
     // Check tun error
     if (FD_ISSET(args->tun, efds)) {
         log_android(ANDROID_LOG_ERROR, "tun %d exception", args->tun);
@@ -71,7 +75,7 @@ int check_tun(const struct arguments *args,
             }
 
             // Handle IP from tun
-            handle_ip(args, buffer, (size_t) length, sessions, maxsessions);
+            handle_ip(args, buffer, (size_t) length, sessions, maxsessions, nativeip);
 
             free(buffer);
         }
@@ -111,12 +115,12 @@ int is_upper_layer(int protocol) {
 
 void handle_ip(const struct arguments *args,
                const uint8_t *pkt, const size_t length,
-               int sessions, int maxsessions) {
+               int sessions, int maxsessions,char *nativeip) {
     uint8_t protocol;
     void *saddr;
     void *daddr;
-    void  *inputip;
-
+   // void  *inputip;
+    //char nativeip[] = "140.116.245.204";
     char source[INET6_ADDRSTRLEN + 1];
     char dest[INET6_ADDRSTRLEN + 1];
     char flags[10];
@@ -214,10 +218,6 @@ void handle_ip(const struct arguments *args,
     uint16_t sport = 0;
     uint16_t dport = 0;
 
-    /*
-    if (pcap_file_other != NULL) {
-        if (!(strcmp (nativeip,dest)) ){
-            write_pcap_rec_other(pkt,(size_t) length);}}*/
 
 
 
@@ -284,18 +284,19 @@ void handle_ip(const struct arguments *args,
 
         // TODO checksum
     }
+    //char nativeip[] = "140.116.245.204";
 
-
-
-    if ( (pcap_file_other != NULL) &&(!(strcmp (nativeip,dest))) ){
+    if ((pcap_file_other != NULL) && (!(strcmp (nativeip,dest))) ){
         write_pcap_rec_other(pkt,(size_t) length);
-
+        //log_android(ANDROID_LOG_DEBUG, "nativeiphandle_ip %s", nativeip);
+        //log_android(ANDROID_LOG_DEBUG, "nativeiphandle_ipdest %s", dest);
     }
-    if ((pcap_file_udp != NULL)&& (protocol == IPPROTO_UDP)){
+
+    if ((pcap_file_udp != NULL) && (protocol == IPPROTO_UDP)){
         write_pcap_rec_udp(pkt,(size_t) length);
     }
 
-    if ((pcap_file_tcp != NULL)&& (protocol == IPPROTO_TCP)){
+    if ((pcap_file_tcp != NULL) && (protocol == IPPROTO_TCP)){
         write_pcap_rec_tcp(pkt,(size_t) length);
     }
 
@@ -387,9 +388,9 @@ void handle_ip(const struct arguments *args,
         if (protocol == IPPROTO_ICMP || protocol == IPPROTO_ICMPV6)
             handle_icmp(args, pkt, length, payload, uid);
         else if (protocol == IPPROTO_UDP)
-            handle_udp(args, pkt, length, payload, uid, redirect);
+            handle_udp(args, pkt, length, payload, uid, redirect, nativeip);
         else if (protocol == IPPROTO_TCP)
-            handle_tcp(args, pkt, length, payload, uid, redirect);
+            handle_tcp(args, pkt, length, payload, uid, redirect, nativeip);
     }
     else {
         if (protocol == IPPROTO_UDP)

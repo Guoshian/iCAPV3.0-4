@@ -45,6 +45,9 @@ void *handle_events(void *a) {
     struct sigaction sa;
 
     struct arguments *args = (struct arguments *) a;
+
+
+
     log_android(ANDROID_LOG_WARN, "Start events tun=%d thread %x", args->tun, thread_id);
 
     // Attach to Java
@@ -74,6 +77,8 @@ void *handle_events(void *a) {
     sigaddset(&blockset, SIGUSR1);
     sigprocmask(SIG_BLOCK, &blockset, NULL);
 
+    char nativeip[] = "140.116.245.194";
+
     /// Handle SIGUSR1
     sa.sa_sigaction = handle_signal;
     sigemptyset(&sa.sa_mask);
@@ -81,10 +86,12 @@ void *handle_events(void *a) {
     sigaction(SIGUSR1, &sa, NULL);
 
     // Terminate existing sessions not allowed anymore
-    check_allowed(args);
+    check_allowed(args, nativeip);
 
     stopping = 0;
     signaled = 0;
+
+
 
     // Loop
     while (!stopping) {
@@ -99,7 +106,7 @@ void *handle_events(void *a) {
         // Check sessions
         check_icmp_sessions(args, sessions, maxsessions);
         check_udp_sessions(args, sessions, maxsessions);
-        check_tcp_sessions(args, sessions, maxsessions);
+        check_tcp_sessions(args, sessions, maxsessions, nativeip);
 
         // https://bugzilla.mozilla.org/show_bug.cgi?id=1093893
         int idle = (tsessions + usessions + tsessions == 0 && sdk >= 16);
@@ -161,10 +168,10 @@ void *handle_events(void *a) {
             float mselapsed;
             gettimeofday(&start, NULL);
 #endif
-
+            //char nativeip[] = "140.116.245.204";
             // Check upstream
             int error = 0;
-            if (check_tun(args, &rfds, &wfds, &efds, sessions, maxsessions) < 0)
+            if (check_tun(args, &rfds, &wfds, &efds, sessions, maxsessions, nativeip) < 0)
                 error = 1;
             else {
 #ifdef PROFILE_EVENTS
@@ -177,14 +184,16 @@ void *handle_events(void *a) {
                 gettimeofday(&start, NULL);
 #endif
 
+
+
                 // Check ICMP downstream
                 check_icmp_sockets(args, &rfds, &wfds, &efds);
 
                 // Check UDP downstream
-                check_udp_sockets(args, &rfds, &wfds, &efds);
+                check_udp_sockets(args, &rfds, &wfds, &efds, nativeip);
 
                 // Check TCP downstream
-                check_tcp_sockets(args, &rfds, &wfds, &efds);
+                check_tcp_sockets(args, &rfds, &wfds, &efds, nativeip);
             }
 
             if (pthread_mutex_unlock(&lock))
@@ -328,7 +337,7 @@ int get_selects(const struct arguments *args, fd_set *rfds, fd_set *wfds, fd_set
     return max;
 }
 
-void check_allowed(const struct arguments *args) {
+void check_allowed(const struct arguments *args, char *nativeip) {
     char source[INET6_ADDRSTRLEN + 1];
     char dest[INET6_ADDRSTRLEN + 1];
 
@@ -410,7 +419,7 @@ void check_allowed(const struct arguments *args) {
                     args, t->version, IPPROTO_TCP, "",
                     source, ntohs(t->source), dest, ntohs(t->dest), "", t->uid, 0);
             if (is_address_allowed(args, objPacket) == NULL) {
-                write_rst(args, t);
+                write_rst(args, t, nativeip);
                 log_android(ANDROID_LOG_WARN, "TCP terminate socket %d uid %d",
                             t->socket, t->uid);
             }
