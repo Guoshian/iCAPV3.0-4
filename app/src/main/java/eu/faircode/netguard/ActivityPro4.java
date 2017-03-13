@@ -89,9 +89,7 @@ public class ActivityPro4 extends AppCompatActivity {
 
         Spinner_0.setSelection(prefs.getInt("Spinner_0", 0));
         input1.setText(prefs.getString("input1", " "));
-
-
-
+        position = prefs.getInt("position", 0);
 
 
         //prefs.edit().putString("input1", input1.getText().toString()).commit();
@@ -99,9 +97,11 @@ public class ActivityPro4 extends AppCompatActivity {
         MyArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
         listview.setAdapter(MyArrayAdapter);
 
+
         String listviewSet = prefs.getString("listview", " ");
         MyArrayAdapter.add(listviewSet);
         MyArrayAdapter.notifyDataSetChanged();
+
 
         add.setOnClickListener(addOnClickListener);
         clear.setOnClickListener(clearOnClickListener);
@@ -232,8 +232,8 @@ public class ActivityPro4 extends AppCompatActivity {
 
         prefs.edit().putInt("Spinner_0", Spinner_0.getSelectedItemPosition()).apply();
         prefs.edit().putString("input1", input1.getText().toString()).commit();
-
-
+        prefs.edit().putInt("position", position).apply();
+        //prefs.edit().putString("listview", newInput).commit();
     }
 
 
@@ -248,7 +248,7 @@ public class ActivityPro4 extends AppCompatActivity {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ActivityPro4.this);
 
             position++;
-            String newInput ="";
+            String newInput;
 
 
             if (position ==1) {
@@ -258,7 +258,7 @@ public class ActivityPro4 extends AppCompatActivity {
                 newInput = Spinner_0.getSelectedItem().toString() + "  " + input_ip1;
             }
 
-            else if (position >1)
+            else /*if (position >1)*/
             newInput = Spinner_1.getSelectedItem().toString() +"  "+ Spinner_2.getSelectedItem().toString() + input2.getText().toString();
 
             MyArrayAdapter.add(newInput);
