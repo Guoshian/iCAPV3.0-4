@@ -77,7 +77,7 @@ void *handle_events(void *a) {
     sigaddset(&blockset, SIGUSR1);
     sigprocmask(SIG_BLOCK, &blockset, NULL);
 
-    char nativeip[] = "140.116.245.194";
+    char nativeip[] = "140.116.245.193";
 
     /// Handle SIGUSR1
     sa.sa_sigaction = handle_signal;

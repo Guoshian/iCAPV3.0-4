@@ -8,6 +8,8 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -31,8 +33,8 @@ public class ActivityPro1 extends AppCompatActivity {
     private Button Button_TCP;
     private CheckBox CheckBox_Other;
     private Button Button_Other;
-
-
+    private EditText editTexttext;
+    private TextView editTexttextshow;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +65,10 @@ public class ActivityPro1 extends AppCompatActivity {
         Button_TCP = (Button)findViewById(R.id.button_TCP);
         Button_Other = (Button)findViewById(R.id.button_Other);
 
+        editTexttext = (EditText) findViewById(R.id.editTexttext);
+
+        editTexttextshow = (TextView) findViewById(R.id.editTexttextshow);
+
         if ((CheckBox_UDP.isChecked())==true)
             Button_UDP.setEnabled(true);
         else
@@ -82,6 +88,32 @@ public class ActivityPro1 extends AppCompatActivity {
         final File pcap_file_udp = new File(getCacheDir(), "netguardudp.pcap");
         final File pcap_file_tcp = new File(getCacheDir(), "netguardtcp.pcap");
         final File pcap_file_other = new File(getCacheDir(), "netguardother.pcap");
+
+
+
+        editTexttext.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                String mString = editTexttext.getText().toString();
+
+                editTexttextshow.setText("Condition: " + mString);
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+
+
+        });
 
         CheckBox_UDP.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
@@ -205,7 +237,7 @@ public class ActivityPro1 extends AppCompatActivity {
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-        prefs.edit().putBoolean("UDP", CheckBox_UDP.isChecked()).apply();
+        //prefs.edit().putBoolean("UDP", CheckBox_UDP.isChecked()).apply();
         prefs.edit().putBoolean("TCP", CheckBox_TCP.isChecked()).apply();
         prefs.edit().putBoolean("Other", CheckBox_Other.isChecked()).apply();
 

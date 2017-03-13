@@ -8,6 +8,7 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -24,6 +25,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
 
 public class ActivityPro4 extends AppCompatActivity {
 
@@ -44,6 +46,9 @@ public class ActivityPro4 extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
         setContentView(R.layout.activity_activity_pro4);
 
         adapter_spinner_list1 = ArrayAdapter.createFromResource(this, R.array.spinner_list1, R.layout.spinnertest);
@@ -80,13 +85,23 @@ public class ActivityPro4 extends AppCompatActivity {
         listview = (ListView) findViewById(R.id.listView);
 
 
-        //sptvinput
+        //prefs.getInt("Spinner_0", Spinner_0.getSelectedItemPosition());
+
+        Spinner_0.setSelection(prefs.getInt("Spinner_0", 0));
+        input1.setText(prefs.getString("input1", " "));
 
 
 
+
+
+        //prefs.edit().putString("input1", input1.getText().toString()).commit();
 
         MyArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
         listview.setAdapter(MyArrayAdapter);
+
+        String listviewSet = prefs.getString("listview", " ");
+        MyArrayAdapter.add(listviewSet);
+        MyArrayAdapter.notifyDataSetChanged();
 
         add.setOnClickListener(addOnClickListener);
         clear.setOnClickListener(clearOnClickListener);
@@ -133,6 +148,7 @@ public class ActivityPro4 extends AppCompatActivity {
         public void onItemSelected(AdapterView adapterView,View view,int position,long id) {
             //TextView textView;
 
+
             TextView textView = (adapterView.getId() == R.id.sp_protocol1)? input1:input2;
 
           //  if (adapterView.getId() == R.id.sp_protocol)
@@ -140,10 +156,10 @@ public class ActivityPro4 extends AppCompatActivity {
 
                 switch (adapterView.getSelectedItemPosition()) {
                     case 0:
-                        textView.setEnabled(false);
-                        textView.setText("");
+                       textView.setEnabled(false);
+                       textView.setText("");
 
-                        setprotocol(0);
+                        setprotocol(0,"");
 
                         break;
 
@@ -151,30 +167,46 @@ public class ActivityPro4 extends AppCompatActivity {
                         textView.setEnabled(false);
                         textView.setText("");
 
-                        setprotocol(1);
+                        setprotocol(1,"");
 
                         break;
 
                     case 2:
                         textView.setEnabled(true);
-                        textView.setText("");
-                        setprotocol(2);
+                        //textView.setText("");
+                        input1.setOnEditorActionListener(new TextView.OnEditorActionListener(){
+                            @Override
+                            public boolean onEditorAction(TextView v, int actionId, KeyEvent event){
+
+                                String input_ip1 =  input1.getText().toString();
+
+                                Toast.makeText(ActivityPro4.this, input_ip1, Toast.LENGTH_LONG).show();
+
+                                return false;
+                            }
+
+
+                        });
+
+
+                        setprotocol(2, input1.getText().toString());
+
                         break;
 
 
                     case 3:
                         textView.setEnabled(true);
-                        textView.setText("");
+                        //textView.setText("");
                         break;
 
                     case 4:
                         textView.setEnabled(true);
-                        textView.setText("");
+                        //textView.setText("");
                         break;
 
                     case 5:
                         textView.setEnabled(true);
-                        textView.setText("");
+                        //textView.setText("");
                         break;
 
 
@@ -192,22 +224,47 @@ public class ActivityPro4 extends AppCompatActivity {
 
 
 
+    @Override
+    protected void onPause(){
+        super.onPause();
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        prefs.edit().putInt("Spinner_0", Spinner_0.getSelectedItemPosition()).apply();
+        prefs.edit().putString("input1", input1.getText().toString()).commit();
+
+
+    }
+
+
+
+
 
     private Button.OnClickListener addOnClickListener= new Button.OnClickListener(){
 
         @Override
     public void onClick(View arg0){
+
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ActivityPro4.this);
+
             position++;
             String newInput ="";
 
-            if (position ==1)
-            newInput = Spinner_0.getSelectedItem().toString() +"  "+ input1.getText().toString();
+
+            if (position ==1) {
+                String input_ip1 =  input1.getText().toString();
+                Toast.makeText(ActivityPro4.this, input_ip1, Toast.LENGTH_LONG).show();
+
+                newInput = Spinner_0.getSelectedItem().toString() + "  " + input_ip1;
+            }
 
             else if (position >1)
             newInput = Spinner_1.getSelectedItem().toString() +"  "+ Spinner_2.getSelectedItem().toString() + input2.getText().toString();
 
             MyArrayAdapter.add(newInput);
+
             MyArrayAdapter.notifyDataSetChanged();
+            prefs.edit().putString("listview", newInput).commit();
 
         }
     };
@@ -225,13 +282,13 @@ public class ActivityPro4 extends AppCompatActivity {
 
 
 
-    private void setprotocol(final int pro){
+    private void setprotocol(final int pro,final String input){
 
         capture.setOnClickListener(new Button.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-
+                
                 if (pro == 0){
                     final File pcap_file_tcp = new File(getCacheDir(), "netguardtcp.pcap");
                     SinkholeService.setPcaptcp(pcap_file_tcp);
@@ -243,9 +300,15 @@ public class ActivityPro4 extends AppCompatActivity {
                     startActivityForResult(getIntentPCAPDocument(pro), REQUEST_PCAPudp);
                 }
                 else if (pro == 2){
+
+                    //String input_ip1 =  input1.getText().toString();
+
                     final File pcap_file_other = new File(getCacheDir(), "netguardother.pcap");
                     SinkholeService.setPcapother(pcap_file_other);
                     startActivityForResult(getIntentPCAPDocument(pro), REQUEST_PCAPother);
+
+                    //Toast.makeText(ActivityPro4.this, input_ip1 , Toast.LENGTH_LONG).show();
+
                 }
             }
 

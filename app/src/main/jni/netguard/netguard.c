@@ -104,6 +104,9 @@ Java_eu_faircode_netguard_SinkholeService_jni_1init(JNIEnv *env, jobject instanc
     init_tcp(&args);
 
     pcap_file = NULL;
+    pcap_file_udp = NULL;
+    pcap_file_tcp = NULL;
+    pcap_file_other = NULL;
 
     if (pthread_mutex_init(&lock, NULL))
         log_android(ANDROID_LOG_ERROR, "pthread_mutex_init failed");

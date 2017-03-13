@@ -13,8 +13,6 @@
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="58dp"
-        android:layout_alignBottom="@+id/button_UDP"
         android:layout_toRightOf="@+id/textView1"
         android:layout_toEndOf="@+id/textView1">
 
@@ -110,6 +108,43 @@
                 android:id="@+id/button_Other"
                 android:layout_below="@+id/textView1"
                 android:layout_column="4" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"></TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"></TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/editTexttext"
+                android:layout_column="3"
+                android:layout_span="2" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"></TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Medium Text"
+                android:id="@+id/editTexttextshow"
+                android:layout_column="3" />
         </TableRow>
     </TableLayout>
 
