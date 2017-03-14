@@ -256,6 +256,11 @@ public class ActivityPro4 extends AppCompatActivity {
                 Toast.makeText(ActivityPro4.this, input_ip1, Toast.LENGTH_LONG).show();
 
                 newInput = Spinner_0.getSelectedItem().toString() + "  " + input_ip1;
+
+
+                InputIp(input_ip1);
+
+
             }
 
             else /*if (position >1)*/
@@ -576,6 +581,15 @@ public class ActivityPro4 extends AppCompatActivity {
                     Toast.makeText(ActivityPro4.this, ex.toString(), Toast.LENGTH_LONG).show();
             }
         }.execute();
+    }
+
+    static String InputIp_edittext1;
+    void InputIp(String inputip){
+        InputIp_edittext1= inputip;
+    }
+
+    String InputIp_edittext(){
+        return InputIp_edittext1 ;
     }
 
 }

@@ -66,6 +66,8 @@ struct arguments {
     jobject instance;
     int tun;
     jboolean fwd53;
+    char *native_ip;
+
 };
 
 struct allowed {

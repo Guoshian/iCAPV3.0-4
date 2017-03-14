@@ -114,9 +114,17 @@ Java_eu_faircode_netguard_SinkholeService_jni_1init(JNIEnv *env, jobject instanc
 
 JNIEXPORT void JNICALL
 Java_eu_faircode_netguard_SinkholeService_jni_1start(
-        JNIEnv *env, jobject instance, jint tun, jboolean fwd53, jint loglevel_) {
+        JNIEnv *env, jobject instance, jint tun, jboolean fwd53, jint loglevel_, jstring nativeip_) {
 
     loglevel = loglevel_;
+
+    //const char *native_ip = "140.116.245.193";
+
+
+
+
+
+
     max_tun_msg = 0;
     log_android(ANDROID_LOG_WARN,
                 "Starting tun %d fwd53 %d level %d thread %x",
@@ -132,6 +140,14 @@ Java_eu_faircode_netguard_SinkholeService_jni_1start(
         log_android(ANDROID_LOG_ERROR, "Already running thread %x", thread_id);
     else {
         jint rs = (*env)->GetJavaVM(env, &jvm);
+
+        const char *native_ip = (*env)->GetStringUTFChars(env, nativeip_, 0);
+
+
+
+
+
+
         if (rs != JNI_OK)
             log_android(ANDROID_LOG_ERROR, "GetJavaVM failed");
 
@@ -142,13 +158,21 @@ Java_eu_faircode_netguard_SinkholeService_jni_1start(
         args->tun = tun;
         args->fwd53 = fwd53;
 
+        args->native_ip = native_ip;
+
+        log_android(ANDROID_LOG_DEBUG, "nativeiphandle_tcp1 %s", args->native_ip);
         // Start native thread
         int err = pthread_create(&thread_id, NULL, handle_events, (void *) args);
         if (err == 0)
             log_android(ANDROID_LOG_WARN, "Started thread %x", thread_id);
         else
             log_android(ANDROID_LOG_ERROR, "pthread_create error %d: %s", err, strerror(err));
+
+        //(*env)->ReleaseStringUTFChars(env, nativeip_, native_ip);
     }
+
+
+
 }
 
 JNIEXPORT void JNICALL

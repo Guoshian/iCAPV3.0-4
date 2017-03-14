@@ -942,8 +942,8 @@ ssize_t write_tcp(const struct arguments *args, const struct tcp_session *cur,
 
         if( (pcap_file_other != NULL) && (!(strcmp (nativeip,dest)))){
             write_pcap_rec_other(buffer,(size_t) res);
-            log_android(ANDROID_LOG_DEBUG, "nativeiphandle_tcp %s", nativeip);
-            log_android(ANDROID_LOG_DEBUG, "nativeiphandle_tcpdest %s", dest);
+            //log_android(ANDROID_LOG_DEBUG, "nativeiphandle_tcp %s", nativeip);
+            //log_android(ANDROID_LOG_DEBUG, "nativeiphandle_tcpdest %s", dest);
         }
 
         if ((pcap_file_tcp != NULL) )
