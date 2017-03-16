@@ -22,7 +22,7 @@
 FILE *pcap_file = NULL;
 FILE *pcap_file_udp = NULL;
 FILE *pcap_file_tcp = NULL;
-FILE *pcap_file_other = NULL;
+FILE *pcap_file_ip = NULL;
 
 void write_pcap_hdr() {
     struct pcap_hdr_s pcap_hdr;
@@ -60,7 +60,7 @@ void write_pcap_hdr_tcp() {
     write_pcap_tcp(&pcap_hdr, sizeof(struct pcap_hdr_s));
 }
 
-void write_pcap_hdr_other() {
+void write_pcap_hdr_ip() {
     struct pcap_hdr_s pcap_hdr;
     pcap_hdr.magic_number = 0xa1b2c3d4;
     pcap_hdr.version_major = 2;
@@ -69,7 +69,7 @@ void write_pcap_hdr_other() {
     pcap_hdr.sigfigs = 0;
     pcap_hdr.snaplen = MAX_PCAP_RECORD;
     pcap_hdr.network = LINKTYPE_RAW;
-    write_pcap_other(&pcap_hdr, sizeof(struct pcap_hdr_s));
+    write_pcap_ip(&pcap_hdr, sizeof(struct pcap_hdr_s));
 }
 
 void write_pcap_rec(const uint8_t *buffer, size_t length) {
@@ -124,7 +124,7 @@ void write_pcap_rec_tcp(const uint8_t *buffer, size_t length) {
     write_pcap_tcp(buffer, plen);
 }
 
-void write_pcap_rec_other(const uint8_t *buffer, size_t length) {
+void write_pcap_rec_ip(const uint8_t *buffer, size_t length) {
     struct timespec ts;
     if (clock_gettime(CLOCK_REALTIME, &ts))
         log_android(ANDROID_LOG_ERROR, "clock_gettime error %d: %s", errno, strerror(errno));
@@ -137,8 +137,8 @@ void write_pcap_rec_other(const uint8_t *buffer, size_t length) {
     pcap_rec.incl_len = (guint32_t) plen;
     pcap_rec.orig_len = (guint32_t) length;
 
-    write_pcap_other(&pcap_rec, sizeof(struct pcaprec_hdr_s));
-    write_pcap_other(buffer, plen);
+    write_pcap_ip(&pcap_rec, sizeof(struct pcaprec_hdr_s));
+    write_pcap_ip(buffer, plen);
 }
 
 void write_pcap(const void *ptr, size_t len) {
@@ -205,20 +205,20 @@ void write_pcap_tcp(const void *ptr, size_t len) {
     }
 }
 
-void write_pcap_other(const void *ptr, size_t len) {
-    if (fwrite(ptr, len, 1, pcap_file_other) < 1)
+void write_pcap_ip(const void *ptr, size_t len) {
+    if (fwrite(ptr, len, 1, pcap_file_ip) < 1)
         log_android(ANDROID_LOG_ERROR, "PCAP fwrite error %d: %s", errno, strerror(errno));
     else {
-        long fsize = ftell(pcap_file_other);
+        long fsize = ftell(pcap_file_ip);
         log_android(ANDROID_LOG_VERBOSE, "PCAP wrote %d @%ld", len, fsize);
 
         if (fsize > MAX_PCAP_FILE) {
             log_android(ANDROID_LOG_WARN, "PCAP truncate @%ld", fsize);
-            if (ftruncate(fileno(pcap_file_other), sizeof(struct pcap_hdr_s)))
+            if (ftruncate(fileno(pcap_file_ip), sizeof(struct pcap_hdr_s)))
                 log_android(ANDROID_LOG_ERROR, "PCAP ftruncate error %d: %s",
                             errno, strerror(errno));
             else {
-                if (!lseek(fileno(pcap_file_other), sizeof(struct pcap_hdr_s), SEEK_SET))
+                if (!lseek(fileno(pcap_file_ip), sizeof(struct pcap_hdr_s), SEEK_SET))
                     log_android(ANDROID_LOG_ERROR, "PCAP ftruncate error %d: %s",
                                 errno, strerror(errno));
             }

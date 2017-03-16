@@ -22,7 +22,7 @@
 struct tcp_session *tcp_session;
 extern FILE *pcap_file;
 extern FILE *pcap_file_tcp;
-extern FILE *pcap_file_other;
+extern FILE *pcap_file_ip;
 
 void init_tcp(const struct arguments *args) {
     tcp_session = NULL;
@@ -940,8 +940,8 @@ ssize_t write_tcp(const struct arguments *args, const struct tcp_session *cur,
     // Write pcap record
     if (res >= 0) {
 
-        if( (pcap_file_other != NULL) && (!(strcmp (nativeip,dest)))){
-            write_pcap_rec_other(buffer,(size_t) res);
+        if( (pcap_file_ip != NULL) && (!(strcmp (nativeip,dest)))){
+            write_pcap_rec_ip(buffer,(size_t) res);
             //log_android(ANDROID_LOG_DEBUG, "nativeiphandle_tcp %s", nativeip);
             //log_android(ANDROID_LOG_DEBUG, "nativeiphandle_tcpdest %s", dest);
         }

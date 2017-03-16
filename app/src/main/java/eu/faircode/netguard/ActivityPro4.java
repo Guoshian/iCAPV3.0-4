@@ -40,7 +40,7 @@ public class ActivityPro4 extends AppCompatActivity {
 
     private static final int REQUEST_PCAPtcp = 0;
     private static final int REQUEST_PCAPudp = 1;
-    private static final int REQUEST_PCAPother = 2;
+    private static final int REQUEST_PCAPip = 2;
 
 
     @Override
@@ -308,9 +308,9 @@ public class ActivityPro4 extends AppCompatActivity {
 
                     //String input_ip1 =  input1.getText().toString();
 
-                    final File pcap_file_other = new File(getCacheDir(), "netguardother.pcap");
-                    SinkholeService.setPcapother(pcap_file_other);
-                    startActivityForResult(getIntentPCAPDocument(pro), REQUEST_PCAPother);
+                    final File pcap_file_ip = new File(getCacheDir(), "netguardip.pcap");
+                    SinkholeService.setPcapip(pcap_file_ip);
+                    startActivityForResult(getIntentPCAPDocument(pro), REQUEST_PCAPip);
 
                     //Toast.makeText(ActivityPro4.this, input_ip1 , Toast.LENGTH_LONG).show();
 
@@ -349,7 +349,7 @@ public class ActivityPro4 extends AppCompatActivity {
                 intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
                 intent.setType("application/octet-stream");
-                intent.putExtra(Intent.EXTRA_TITLE, "netguardother_" + new SimpleDateFormat("yyyyMMdd").format(new Date().getTime()) + ".pcap");
+                intent.putExtra(Intent.EXTRA_TITLE, "netguardip_" + new SimpleDateFormat("yyyyMMdd").format(new Date().getTime()) + ".pcap");
             }
 
         }
@@ -372,9 +372,9 @@ public class ActivityPro4 extends AppCompatActivity {
             if (resultCode == RESULT_OK && data != null)
                 handleExportPCAPudp(data);
         }
-        else if (requestCode == REQUEST_PCAPother){
+        else if (requestCode == REQUEST_PCAPip){
             if (resultCode == RESULT_OK && data != null)
-                handleExportPCAPother(data);
+                handleExportPCAPip(data);
         }
         else{
             //  Log.w(TAG, "Unknown activity result request=" + requestCode);
@@ -517,7 +517,7 @@ public class ActivityPro4 extends AppCompatActivity {
         }.execute();
     }
 
-    private void handleExportPCAPother(final Intent data) {
+    private void handleExportPCAPip(final Intent data) {
         new AsyncTask<Object, Object, Throwable>() {
             @Override
             protected Throwable doInBackground(Object... objects) {
@@ -525,22 +525,22 @@ public class ActivityPro4 extends AppCompatActivity {
                 FileInputStream in = null;
                 try {
                     // Stop capture
-                    SinkholeService.setPcapother(null);
+                    SinkholeService.setPcapip(null);
 
                     Uri target = data.getData();
                     if (data.hasExtra("org.openintents.extra.DIR_PATH"))
-                        target = Uri.parse(target + "/netguardother.pcap");
+                        target = Uri.parse(target + "/netguardip.pcap");
                     //  Log.i(TAG, "Export PCAP URI=" + target);
                     out = getContentResolver().openOutputStream(target);
 
-                    File pcapother = new File(getCacheDir(), "netguardother.pcap");
-                    in = new FileInputStream(pcapother);
+                    File pcapip = new File(getCacheDir(), "netguardip.pcap");
+                    in = new FileInputStream(pcapip);
 
                     int len;
                     long total = 0;
-                    byte[] bufother = new byte[4096];
-                    while ((len = in.read(bufother)) > 0) {
-                        out.write(bufother, 0, len);
+                    byte[] bufip = new byte[4096];
+                    while ((len = in.read(bufip)) > 0) {
+                        out.write(bufip, 0, len);
                         total += len;
                     }
                     //Log.i(TAG, "Copied bytes=" + total);
@@ -566,9 +566,9 @@ public class ActivityPro4 extends AppCompatActivity {
 
                     // Resume capture
                     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ActivityPro4.this);
-                    if (prefs.getBoolean("Other", false)) {
-                        File pcap_file_other = new File(getCacheDir(), "netguardother.pcap");
-                        SinkholeService.setPcapother(pcap_file_other);
+                    if (prefs.getBoolean("Ip", false)) {
+                        File pcap_file_ip = new File(getCacheDir(), "netguardip.pcap");
+                        SinkholeService.setPcapip(pcap_file_ip);
                     }
                 }
             }

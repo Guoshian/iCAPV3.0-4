@@ -146,6 +146,18 @@
                 android:id="@+id/editTexttextshow"
                 android:layout_column="3" />
         </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="port"
+                android:id="@+id/button_port"
+                android:layout_column="4" />
+        </TableRow>
     </TableLayout>
 
 

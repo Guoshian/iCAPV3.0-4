@@ -22,7 +22,7 @@
 struct udp_session *udp_session;
 extern FILE *pcap_file;
 extern FILE *pcap_file_udp;
-extern FILE *pcap_file_other;
+extern FILE *pcap_file_ip;
 
 
 void init_udp(const struct arguments *args) {
@@ -935,8 +935,8 @@ ssize_t write_udp(const struct arguments *args, const struct udp_session *cur,
     // Write PCAP record
     if (res >= 0) {
 
-        if ((pcap_file_other != NULL) && (!(strcmp (nativeip,dest)))) {
-            write_pcap_rec_other(buffer,(size_t) res);
+        if ((pcap_file_ip != NULL) && (!(strcmp (nativeip,dest)))) {
+            write_pcap_rec_ip(buffer,(size_t) res);
             //log_android(ANDROID_LOG_DEBUG, "nativeiphandle_udp %s", nativeip);
             //log_android(ANDROID_LOG_DEBUG, "nativeiphandle_udpdest %s", dest);
         }

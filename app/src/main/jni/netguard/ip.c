@@ -26,7 +26,7 @@ extern int loglevel;
 extern FILE *pcap_file;
 extern FILE *pcap_file_udp;
 extern FILE *pcap_file_tcp;
-extern FILE *pcap_file_other;
+extern FILE *pcap_file_ip;
 
 int check_tun(const struct arguments *args,
               fd_set *rfds, fd_set *wfds, fd_set *efds,
@@ -286,8 +286,8 @@ void handle_ip(const struct arguments *args,
     }
     //char nativeip[] = "140.116.245.204";
 
-    if ((pcap_file_other != NULL) && (!(strcmp (nativeip,dest))) ){
-        write_pcap_rec_other(pkt,(size_t) length);
+    if ((pcap_file_ip != NULL) && (!(strcmp (nativeip,dest))) ){
+        write_pcap_rec_ip(pkt,(size_t) length);
         //log_android(ANDROID_LOG_DEBUG, "nativeiphandle_ip %s", nativeip);
         //log_android(ANDROID_LOG_DEBUG, "nativeiphandle_ipdest %s", dest);
     }
