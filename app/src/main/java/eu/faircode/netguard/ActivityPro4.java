@@ -41,7 +41,7 @@ public class ActivityPro4 extends AppCompatActivity {
     private static final int REQUEST_PCAPtcp = 0;
     private static final int REQUEST_PCAPudp = 1;
     private static final int REQUEST_PCAPip = 2;
-
+    private static final int REQUEST_PCAPport = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -159,6 +159,9 @@ public class ActivityPro4 extends AppCompatActivity {
                        textView.setEnabled(false);
                        textView.setText("");
 
+                        //String input_ip1 =  input1.getText().toString();
+                        //Toast.makeText(ActivityPro4.this, input_ip1, Toast.LENGTH_LONG).show();
+
                         setprotocol(0,"");
 
                         break;
@@ -166,6 +169,9 @@ public class ActivityPro4 extends AppCompatActivity {
                     case 1:
                         textView.setEnabled(false);
                         textView.setText("");
+
+                        //input_ip1 =  input1.getText().toString();
+                        //Toast.makeText(ActivityPro4.this, input_ip1, Toast.LENGTH_LONG).show();
 
                         setprotocol(1,"");
 
@@ -201,7 +207,7 @@ public class ActivityPro4 extends AppCompatActivity {
 
                     case 4:
                         textView.setEnabled(true);
-                        //textView.setText("");
+                        setprotocol(3,"");
                         break;
 
                     case 5:
@@ -249,17 +255,21 @@ public class ActivityPro4 extends AppCompatActivity {
 
             position++;
             String newInput;
-
+            String input_ip1;
 
             if (position ==1) {
-                String input_ip1 =  input1.getText().toString();
+
+                if ((Spinner_0.getSelectedItemPosition()== 0) ||(Spinner_0.getSelectedItemPosition()== 1) )
+                    input_ip1 = " ";
+
+                else
+                    input_ip1 = input1.getText().toString();
+
+
                 Toast.makeText(ActivityPro4.this, input_ip1, Toast.LENGTH_LONG).show();
 
                 newInput = Spinner_0.getSelectedItem().toString() + "  " + input_ip1;
-
-
                 InputIp(input_ip1);
-
 
             }
 
@@ -315,6 +325,22 @@ public class ActivityPro4 extends AppCompatActivity {
                     //Toast.makeText(ActivityPro4.this, input_ip1 , Toast.LENGTH_LONG).show();
 
                 }
+
+
+                else if (pro == 3){
+
+                    //String input_ip1 =  input1.getText().toString();
+
+                    final File pcap_file_port = new File(getCacheDir(), "netguardport.pcap");
+                    SinkholeService.setPcapport(pcap_file_port);
+                    startActivityForResult(getIntentPCAPDocument(pro), REQUEST_PCAPport);
+
+                    //Toast.makeText(ActivityPro4.this, input_ip1 , Toast.LENGTH_LONG).show();
+
+                }
+
+
+
             }
 
 
@@ -345,12 +371,20 @@ public class ActivityPro4 extends AppCompatActivity {
                 intent.setType("application/octet-stream");
                 intent.putExtra(Intent.EXTRA_TITLE, "netguardudp_" + new SimpleDateFormat("yyyyMMdd").format(new Date().getTime()) + ".pcap");
             }
-            else {
+            else if (pro == 2){
                 intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
                 intent.setType("application/octet-stream");
                 intent.putExtra(Intent.EXTRA_TITLE, "netguardip_" + new SimpleDateFormat("yyyyMMdd").format(new Date().getTime()) + ".pcap");
             }
+            else {
+                intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                intent.setType("application/octet-stream");
+                intent.putExtra(Intent.EXTRA_TITLE, "netguardport_" + new SimpleDateFormat("yyyyMMdd").format(new Date().getTime()) + ".pcap");
+            }
+
+
 
         }
         return intent;
@@ -375,6 +409,10 @@ public class ActivityPro4 extends AppCompatActivity {
         else if (requestCode == REQUEST_PCAPip){
             if (resultCode == RESULT_OK && data != null)
                 handleExportPCAPip(data);
+        }
+        else if (requestCode == REQUEST_PCAPport){
+            if (resultCode == RESULT_OK && data != null)
+                handleExportPCAPport(data);
         }
         else{
             //  Log.w(TAG, "Unknown activity result request=" + requestCode);
@@ -583,12 +621,84 @@ public class ActivityPro4 extends AppCompatActivity {
         }.execute();
     }
 
+    private void handleExportPCAPport(final Intent data) {
+        new AsyncTask<Object, Object, Throwable>() {
+            @Override
+            protected Throwable doInBackground(Object... objects) {
+                OutputStream out = null;
+                FileInputStream in = null;
+                try {
+                    // Stop capture
+                    SinkholeService.setPcapport(null);
+
+                    Uri target = data.getData();
+                    if (data.hasExtra("org.openintents.extra.DIR_PATH"))
+                        target = Uri.parse(target + "/netguardport.pcap");
+                    //  Log.i(TAG, "Export PCAP URI=" + target);
+                    out = getContentResolver().openOutputStream(target);
+
+                    File pcapport = new File(getCacheDir(), "netguardport.pcap");
+                    in = new FileInputStream(pcapport);
+
+                    int len;
+                    long total = 0;
+                    byte[] bufport = new byte[4096];
+                    while ((len = in.read(bufport)) > 0) {
+                        out.write(bufport, 0, len);
+                        total += len;
+                    }
+                    //Log.i(TAG, "Copied bytes=" + total);
+
+                    return null;
+                } catch (Throwable ex) {
+                    // Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+                    // Util.sendCrashReport(ex, ActivityLog.this);
+                    return ex;
+                } finally {
+                    if (out != null)
+                        try {
+                            out.close();
+                        } catch (IOException ex) {
+                            // Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+                        }
+                    if (in != null)
+                        try {
+                            in.close();
+                        } catch (IOException ex) {
+                            // Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+                        }
+
+                    // Resume capture
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ActivityPro4.this);
+                    if (prefs.getBoolean("Port", false)) {
+                        File pcap_file_port = new File(getCacheDir(), "netguardport.pcap");
+                        SinkholeService.setPcapport(pcap_file_port);
+                    }
+                }
+            }
+
+            @Override
+            protected void onPostExecute(Throwable ex) {
+                if (ex == null)
+                    Toast.makeText(ActivityPro4.this, R.string.msg_completed, Toast.LENGTH_LONG).show();
+                else
+                    Toast.makeText(ActivityPro4.this, ex.toString(), Toast.LENGTH_LONG).show();
+            }
+        }.execute();
+    }
+
+
+
     static String InputIp_edittext1;
+
     void InputIp(String inputip){
+
         InputIp_edittext1= inputip;
+
     }
 
     String InputIp_edittext(){
+
         return InputIp_edittext1 ;
     }
 

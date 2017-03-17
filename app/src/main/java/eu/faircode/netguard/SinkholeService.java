@@ -869,12 +869,17 @@ public class SinkholeService extends VpnService implements SharedPreferences.OnS
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(SinkholeService.this);
         boolean log = prefs.getBoolean("log", false);
         boolean filter = prefs.getBoolean("filter", false);
+        String nativeip=" ";
 
-        //ActivityPro4 InputIp = new ActivityPro4();
+        ActivityPro4 InputIp = new ActivityPro4();
+        if (InputIp.InputIp_edittext()==" ")
+            nativeip = " ";
 
-        //String nativeip = InputIp.InputIp_edittext();
+        else
+            nativeip = InputIp.InputIp_edittext();
 
-       String nativeip = "123";
+
+       //String nativeip = "123";
 
         Log.i(TAG, "Start native log=" + log + " filter=" + filter);
 
