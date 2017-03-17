@@ -156,6 +156,8 @@ public class SinkholeService extends VpnService implements SharedPreferences.OnS
 
     private static native void jni_pcapip(String name);
 
+    private static native void jni_pcapport(String name);
+
     private native void jni_done();
 
     public static void setPcap(File pcap) {
@@ -173,6 +175,11 @@ public class SinkholeService extends VpnService implements SharedPreferences.OnS
     public static void setPcapip(File pcap) {
         jni_pcapip(pcap == null ? null : pcap.getAbsolutePath());
     }
+
+    public static void setPcapport(File pcap) {
+        jni_pcapport(pcap == null ? null : pcap.getAbsolutePath());
+    }
+
 
     synchronized private static PowerManager.WakeLock getLock(Context context) {
         if (wlInstance == null) {
@@ -863,10 +870,11 @@ public class SinkholeService extends VpnService implements SharedPreferences.OnS
         boolean log = prefs.getBoolean("log", false);
         boolean filter = prefs.getBoolean("filter", false);
 
-        ActivityPro4 InputIp = new ActivityPro4();
+        //ActivityPro4 InputIp = new ActivityPro4();
 
-        String nativeip = InputIp.InputIp_edittext();
-        //String nativeip = "140.116.245.204";
+        //String nativeip = InputIp.InputIp_edittext();
+
+       String nativeip = "123";
 
         Log.i(TAG, "Start native log=" + log + " filter=" + filter);
 
@@ -1381,8 +1389,12 @@ public class SinkholeService extends VpnService implements SharedPreferences.OnS
         boolean pcaptcp = prefs.getBoolean("TCP", false);
         setPcaptcp(pcaptcp ? new File(getCacheDir(), "netguardtcp.pcap") : null);
 
-        //boolean pcapother = prefs.getBoolean("Other", false);
-        //setPcapother(pcapother ? new File(getCacheDir(), "netguardother.pcap") : null);
+        boolean pcapip = prefs.getBoolean("Ip", false);
+        setPcapip(pcapip ? new File(getCacheDir(), "netguardip.pcap") : null);
+
+        boolean pcapport = prefs.getBoolean("Port", false);
+        setPcapip(pcapport ? new File(getCacheDir(), "netguardport.pcap") : null);
+
 
         prefs.registerOnSharedPreferenceChangeListener(this);
 

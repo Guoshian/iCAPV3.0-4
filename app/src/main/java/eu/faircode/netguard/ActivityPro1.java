@@ -27,6 +27,7 @@ public class ActivityPro1 extends AppCompatActivity {
     private static final int REQUEST_PCAPudp = 1;
     private static final int REQUEST_PCAPtcp = 2;
     private static final int REQUEST_PCAPip= 3;
+    private static final int REQUEST_PCAPport= 4;
     private CheckBox CheckBox_UDP;
     private Button Button_UDP;
     private CheckBox CheckBox_TCP;
@@ -91,7 +92,7 @@ public class ActivityPro1 extends AppCompatActivity {
         final File pcap_file_udp = new File(getCacheDir(), "netguardudp.pcap");
         final File pcap_file_tcp = new File(getCacheDir(), "netguardtcp.pcap");
         final File pcap_file_ip = new File(getCacheDir(), "netguardip.pcap");
-
+        final File pcap_file_port = new File(getCacheDir(), "netguardport.pcap");
 
 
         editTexttext.addTextChangedListener(new TextWatcher() {
@@ -105,7 +106,6 @@ public class ActivityPro1 extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
 
 
             }
@@ -229,6 +229,21 @@ public class ActivityPro1 extends AppCompatActivity {
 
 
 
+        Button_Port.setOnClickListener(new Button.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                SinkholeService.setPcapport(pcap_file_port);
+                startActivityForResult(getIntentPCAPportDocument(), REQUEST_PCAPport);
+
+            }
+
+
+        });
+
+
+
 
 
     }
@@ -302,6 +317,28 @@ public class ActivityPro1 extends AppCompatActivity {
         return intent;
     }
 
+
+    private Intent getIntentPCAPportDocument() {
+        Intent intent;
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            if (Util.isPackageInstalled("org.openintents.filemanager", this)) {
+                intent = new Intent("org.openintents.action.PICK_DIRECTORY");
+            } else {
+                intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=org.openintents.filemanager"));
+            }
+        } else {
+            intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("application/octet-stream");
+            intent.putExtra(Intent.EXTRA_TITLE, "netguardport_" + new SimpleDateFormat("yyyyMMdd").format(new Date().getTime()) + ".pcap");
+        }
+        return intent;
+    }
+
+
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
         //Log.i(TAG, "onActivityResult request=" + requestCode + " result=" + requestCode + " ok=" + (resultCode == RESULT_OK));
@@ -311,27 +348,21 @@ public class ActivityPro1 extends AppCompatActivity {
                 handleExportPCAP(data);
 
         }
-        //else {
-          //  Log.w(TAG, "Unknown activity result request=" + requestCode);
-        //    super.onActivityResult(requestCode, resultCode, data);
-        //}
-
 
         else if (requestCode == REQUEST_PCAPtcp) {
             if (resultCode == RESULT_OK && data != null)
                 handleExportPCAPtcp(data);
 
         }
-        //else {
-            //  Log.w(TAG, "Unknown activity result request=" + requestCode);
-        //    super.onActivityResult(requestCode, resultCode, data);
-       // }
-
         else if (requestCode == REQUEST_PCAPip) {
             if (resultCode == RESULT_OK && data != null)
                 handleExportPCAPip(data);
 
-        } else {
+        } else if (requestCode == REQUEST_PCAPport) {
+            if (resultCode == RESULT_OK && data != null)
+                handleExportPCAPport(data);
+
+        }else {
             //  Log.w(TAG, "Unknown activity result request=" + requestCode);
             super.onActivityResult(requestCode, resultCode, data);
         }
@@ -537,5 +568,70 @@ public class ActivityPro1 extends AppCompatActivity {
     }
 
 
+    private void handleExportPCAPport(final Intent data) {
+        new AsyncTask<Object, Object, Throwable>() {
+            @Override
+            protected Throwable doInBackground(Object... objects) {
+                OutputStream out = null;
+                FileInputStream in = null;
+                try {
+                    // Stop capture
+                    SinkholeService.setPcapport(null);
+
+                    Uri target = data.getData();
+                    if (data.hasExtra("org.openintents.extra.DIR_PATH"))
+                        target = Uri.parse(target + "/netguardport.pcap");
+                    //  Log.i(TAG, "Export PCAP URI=" + target);
+                    out = getContentResolver().openOutputStream(target);
+
+                    File pcapport = new File(getCacheDir(), "netguardport.pcap");
+                    in = new FileInputStream(pcapport);
+
+                    int len;
+                    long total = 0;
+                    byte[] bufport= new byte[4096];
+                    while ((len = in.read(bufport)) > 0) {
+                        out.write(bufport, 0, len);
+                        total += len;
+                    }
+                    //Log.i(TAG, "Copied bytes=" + total);
+
+                    return null;
+                } catch (Throwable ex) {
+                    // Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+                    // Util.sendCrashReport(ex, ActivityLog.this);
+                    return ex;
+                } finally {
+                    if (out != null)
+                        try {
+                            out.close();
+                        } catch (IOException ex) {
+                            // Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+                        }
+                    if (in != null)
+                        try {
+                            in.close();
+                        } catch (IOException ex) {
+                            // Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+                        }
+
+                    // Resume capture
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ActivityPro1.this);
+                    if (prefs.getBoolean("Port", false)) {
+                        File pcap_file_port = new File(getCacheDir(), "netguardport.pcap");
+                        SinkholeService.setPcapport(pcap_file_port);
+                    }
+                }
+            }
+
+            @Override
+            protected void onPostExecute(Throwable ex) {
+                if (ex == null)
+                    Toast.makeText(ActivityPro1.this, R.string.msg_completed, Toast.LENGTH_LONG).show();
+                else
+                    Toast.makeText(ActivityPro1.this, ex.toString(), Toast.LENGTH_LONG).show();
+            }
+        }.execute();
+    }
 
 }

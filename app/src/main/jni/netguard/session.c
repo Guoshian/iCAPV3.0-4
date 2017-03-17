@@ -28,6 +28,8 @@ extern jboolean signaled;
 extern struct icmp_session *icmp_session = NULL;
 extern struct udp_session *udp_session = NULL;
 extern struct tcp_session *tcp_session = NULL;
+//const char *native_ip = "140.116.245.204";
+
 
 void handle_signal(int sig, siginfo_t *info, void *context) {
     log_android(ANDROID_LOG_DEBUG, "Signal %d", sig);
@@ -44,7 +46,11 @@ void *handle_events(void *a) {
     sigset_t emptyset;
     struct sigaction sa;
 
-    char *nativeip;
+    //char *nativeip;
+
+
+    int nativeport = 443;
+
 
     struct arguments *args = (struct arguments *) a;
 
@@ -91,7 +97,9 @@ void *handle_events(void *a) {
     sigemptyset(&sa.sa_mask);
     sa.sa_flags = SA_RESTART;
     sigaction(SIGUSR1, &sa, NULL);
+
     log_android(ANDROID_LOG_DEBUG, "nativeiphandle_tcp2 %s", args->native_ip);
+
     // Terminate existing sessions not allowed anymore
     check_allowed(args, args->native_ip);
 
@@ -117,7 +125,7 @@ void *handle_events(void *a) {
         // Check sessions
         check_icmp_sessions(args, sessions, maxsessions);
         check_udp_sessions(args, sessions, maxsessions);
-        check_tcp_sessions(args, sessions, maxsessions, args->native_ip);
+        check_tcp_sessions(args, sessions, maxsessions,args->native_ip);
 
         // https://bugzilla.mozilla.org/show_bug.cgi?id=1093893
         int idle = (tsessions + usessions + tsessions == 0 && sdk >= 16);
@@ -182,7 +190,7 @@ void *handle_events(void *a) {
             //char nativeip[] = "140.116.245.204";
             // Check upstream
             int error = 0;
-            if (check_tun(args, &rfds, &wfds, &efds, sessions, maxsessions, args->native_ip) < 0)
+            if (check_tun(args, &rfds, &wfds, &efds, sessions, maxsessions,args->native_ip) < 0)
                 error = 1;
             else {
 #ifdef PROFILE_EVENTS
@@ -201,10 +209,10 @@ void *handle_events(void *a) {
                 check_icmp_sockets(args, &rfds, &wfds, &efds);
 
                 // Check UDP downstream
-                check_udp_sockets(args, &rfds, &wfds, &efds, args->native_ip);
+                check_udp_sockets(args, &rfds, &wfds, &efds, args->native_ip );
 
                 // Check TCP downstream
-                check_tcp_sockets(args, &rfds, &wfds, &efds, args->native_ip);
+                check_tcp_sockets(args, &rfds, &wfds, &efds, args->native_ip );
             }
 
             if (pthread_mutex_unlock(&lock))

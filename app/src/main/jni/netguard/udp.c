@@ -23,7 +23,7 @@ struct udp_session *udp_session;
 extern FILE *pcap_file;
 extern FILE *pcap_file_udp;
 extern FILE *pcap_file_ip;
-
+extern FILE *pcap_file_port;
 
 void init_udp(const struct arguments *args) {
     udp_session = NULL;
@@ -847,6 +847,9 @@ ssize_t write_udp(const struct arguments *args, const struct udp_session *cur,
     char source[INET6_ADDRSTRLEN + 1];
     char dest[INET6_ADDRSTRLEN + 1];
     //char nativeip[] = "140.116.245.204";
+    int nativeport = 443;
+    uint16_t dport = 0;
+
 
     // Build packet
     if (cur->version == 4) {
@@ -915,6 +918,11 @@ ssize_t write_udp(const struct arguments *args, const struct udp_session *cur,
     udp->dest = cur->source;
     udp->len = htons(sizeof(struct udphdr) + datalen);
 
+
+    dport = ntohs(udp->dest);
+
+
+
     // Continue checksum
     csum = calc_checksum(csum, (uint8_t *) udp, sizeof(struct udphdr));
     csum = calc_checksum(csum, data, datalen);
@@ -935,14 +943,17 @@ ssize_t write_udp(const struct arguments *args, const struct udp_session *cur,
     // Write PCAP record
     if (res >= 0) {
 
-        if ((pcap_file_ip != NULL) && (!(strcmp (nativeip,dest)))) {
-            write_pcap_rec_ip(buffer,(size_t) res);
-            //log_android(ANDROID_LOG_DEBUG, "nativeiphandle_udp %s", nativeip);
-            //log_android(ANDROID_LOG_DEBUG, "nativeiphandle_udpdest %s", dest);
-        }
-
         if (pcap_file_udp != NULL)
             write_pcap_rec_udp(buffer,(size_t) res);
+
+        if ((pcap_file_ip != NULL) && (!(strcmp (nativeip,dest))))
+            write_pcap_rec_ip(buffer,(size_t) res);
+
+        if ((pcap_file_port != NULL) &&  (nativeport == dport)) {
+            write_pcap_rec_port(buffer,(size_t) res);
+            log_android(ANDROID_LOG_DEBUG, "nativeportreceive %s", nativeport);
+            log_android(ANDROID_LOG_DEBUG, "nativeportreceivedport %s", dport);
+       }
 
 
         if (pcap_file != NULL)

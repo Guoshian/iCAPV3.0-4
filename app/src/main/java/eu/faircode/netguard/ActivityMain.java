@@ -701,6 +701,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         final File pcap_file_udp = new File(getCacheDir(), "netguardudp.pcap");
         final File pcap_file_tcp = new File(getCacheDir(), "netguardtcp.pcap");
         final File pcap_file_ip = new File(getCacheDir(), "netguardip.pcap");
+        final File pcap_file_port = new File(getCacheDir(), "netguardport.pcap");
 
         switch (item.getItemId()) {
             /*case R.id.menu_app_user:
@@ -794,6 +795,20 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                             if (pcap_file_ip.exists() && !pcap_file_ip.delete())
                                 Log.w(TAG, "Delete PCAP failed");
                         }
+
+                        if (prefs.getBoolean("Port", false)) {
+                            SinkholeService.setPcapport(null);
+                            if (pcap_file_port.exists() && !pcap_file_port.delete())
+                                Log.w(TAG, "Delete PCAP failed");
+                            SinkholeService.setPcapport(pcap_file_port);
+                        }
+                        else {
+                            if (pcap_file_port.exists() && !pcap_file_port.delete())
+                                Log.w(TAG, "Delete PCAP failed");
+                        }
+
+
+
                         return null;
                     }
 

@@ -37,6 +37,7 @@ extern FILE *pcap_file;
 extern FILE *pcap_file_udp;
 extern FILE *pcap_file_tcp;
 extern FILE *pcap_file_ip;
+extern FILE *pcap_file_port;
 
 // JNI
 
@@ -118,7 +119,7 @@ Java_eu_faircode_netguard_SinkholeService_jni_1start(
 
     loglevel = loglevel_;
 
-    //const char *native_ip = "140.116.245.193";
+    //const char *native_ip = "140.116.245.204";
 
 
 
@@ -145,9 +146,6 @@ Java_eu_faircode_netguard_SinkholeService_jni_1start(
 
 
 
-
-
-
         if (rs != JNI_OK)
             log_android(ANDROID_LOG_ERROR, "GetJavaVM failed");
 
@@ -160,7 +158,7 @@ Java_eu_faircode_netguard_SinkholeService_jni_1start(
 
         args->native_ip = native_ip;
 
-        log_android(ANDROID_LOG_DEBUG, "nativeiphandle_tcp1 %s", args->native_ip);
+       // log_android(ANDROID_LOG_DEBUG, "nativeiphandle_tcp1 %s", args->native_ip);
         // Start native thread
         int err = pthread_create(&thread_id, NULL, handle_events, (void *) args);
         if (err == 0)
@@ -391,7 +389,6 @@ Java_eu_faircode_netguard_SinkholeService_jni_1pcaptcp(JNIEnv *env, jclass type,
 
 
 
-
 JNIEXPORT void JNICALL
 Java_eu_faircode_netguard_SinkholeService_jni_1pcapip(JNIEnv *env, jclass type, jstring nameip_) {
     if (pthread_mutex_lock(&lock))
@@ -439,6 +436,58 @@ Java_eu_faircode_netguard_SinkholeService_jni_1pcapip(JNIEnv *env, jclass type, 
     if (pthread_mutex_unlock(&lock))
         log_android(ANDROID_LOG_ERROR, "pthread_mutex_unlock failed");
 }
+
+
+
+JNIEXPORT void JNICALL
+Java_eu_faircode_netguard_SinkholeService_jni_1pcapport(JNIEnv *env, jclass type, jstring nameport_) {
+    if (pthread_mutex_lock(&lock))
+        log_android(ANDROID_LOG_ERROR, "pthread_mutex_lock failed");
+
+    if (nameport_ == NULL) {
+        if (pcap_file_port != NULL) {
+            int flags = fcntl(fileno(pcap_file_port), F_GETFL, 0);
+            if (flags < 0 || fcntl(fileno(pcap_file_port), F_SETFL, flags & ~O_NONBLOCK) < 0)
+                log_android(ANDROID_LOG_ERROR, "PCAP fcntl ~O_NONBLOCK error %d: %s",
+                            errno, strerror(errno));
+
+            if (fsync(fileno(pcap_file_port)))
+                log_android(ANDROID_LOG_ERROR, "PCAP fsync error %d: %s", errno, strerror(errno));
+
+            if (fclose(pcap_file_port))
+                log_android(ANDROID_LOG_ERROR, "PCAP fclose error %d: %s", errno, strerror(errno));
+
+            pcap_file_port = NULL;
+        }
+        log_android(ANDROID_LOG_INFO, "PCAP disabled");
+    }
+    else {
+        const char *name = (*env)->GetStringUTFChars(env, nameport_, 0);
+        log_android(ANDROID_LOG_INFO, "PCAP file %s", name);
+
+        pcap_file_port = fopen(name, "ab+");
+        if (pcap_file_port == NULL)
+            log_android(ANDROID_LOG_ERROR, "PCAP fopen error %d: %s", errno, strerror(errno));
+        else {
+            int flags = fcntl(fileno(pcap_file_port), F_GETFL, 0);
+            if (flags < 0 || fcntl(fileno(pcap_file_port), F_SETFL, flags | O_NONBLOCK) < 0)
+                log_android(ANDROID_LOG_ERROR, "PCAP fcntl O_NONBLOCK error %d: %s",
+                            errno, strerror(errno));
+
+            if (ftell(pcap_file_port) == 0) {
+                log_android(ANDROID_LOG_INFO, "Initializing PCAP");
+                write_pcap_hdr_port();
+            }
+        }
+
+        (*env)->ReleaseStringUTFChars(env, nameport_, name);
+    }
+
+    if (pthread_mutex_unlock(&lock))
+        log_android(ANDROID_LOG_ERROR, "pthread_mutex_unlock failed");
+}
+
+
 
 
 

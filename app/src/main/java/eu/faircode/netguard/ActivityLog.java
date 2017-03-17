@@ -324,7 +324,8 @@ public class ActivityLog extends AppCompatActivity implements SharedPreferences.
         final File pcap_file = new File(getCacheDir(), "netguard.pcap");
         final File pcap_file_udp = new File(getCacheDir(), "netguardudp.pcap");
         final File pcap_file_tcp = new File(getCacheDir(), "netguardtcp.pcap");
-        final File pcap_file_other = new File(getCacheDir(), "netguardother.pcap");
+        final File pcap_file_ip = new File(getCacheDir(), "netguardip.pcap");
+        final File pcap_file_port = new File(getCacheDir(), "netguardip.pcap");
 
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -427,16 +428,28 @@ public class ActivityLog extends AppCompatActivity implements SharedPreferences.
                             if (pcap_file_tcp.exists() && !pcap_file_tcp.delete())
                                 Log.w(TAG, "Delete PCAP failed");
                         }
-                        /*if (prefs.getBoolean("Other", false)) {
-                            SinkholeService.setPcapother(null);
-                            if (pcap_file_other.exists() && !pcap_file_other.delete())
+                        if (prefs.getBoolean("Ip", false)) {
+                            SinkholeService.setPcapip(null);
+                            if (pcap_file_ip.exists() && !pcap_file_ip.delete())
                                 Log.w(TAG, "Delete PCAP failed");
-                            SinkholeService.setPcapother(pcap_file_other);
+                            SinkholeService.setPcapip(pcap_file_ip);
                         }
                         else {
-                            if (pcap_file_other.exists() && !pcap_file_other.delete())
+                            if (pcap_file_ip.exists() && !pcap_file_ip.delete())
                                 Log.w(TAG, "Delete PCAP failed");
-                        }*/
+                        }
+                        if (prefs.getBoolean("Port", false)) {
+                            SinkholeService.setPcapport(null);
+                            if (pcap_file_port.exists() && !pcap_file_port.delete())
+                                Log.w(TAG, "Delete PCAP failed");
+                            SinkholeService.setPcapport(pcap_file_port);
+                        }
+                        else {
+                            if (pcap_file_port.exists() && !pcap_file_port.delete())
+                                Log.w(TAG, "Delete PCAP failed");
+                        }
+
+
 
                         return null;
                     }

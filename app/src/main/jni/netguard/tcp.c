@@ -23,6 +23,7 @@ struct tcp_session *tcp_session;
 extern FILE *pcap_file;
 extern FILE *pcap_file_tcp;
 extern FILE *pcap_file_ip;
+extern FILE *pcap_file_port;
 
 void init_tcp(const struct arguments *args) {
     tcp_session = NULL;
@@ -817,7 +818,7 @@ ssize_t write_tcp(const struct arguments *args, const struct tcp_session *cur,
     uint16_t sport = 0;
     uint16_t dport = 0;
     //char nativeip[] = "140.116.245.204";
-
+    int nativeport = 443;
 
     // Build packet
     int optlen = (syn ? 4 : 0);
@@ -940,14 +941,17 @@ ssize_t write_tcp(const struct arguments *args, const struct tcp_session *cur,
     // Write pcap record
     if (res >= 0) {
 
-        if( (pcap_file_ip != NULL) && (!(strcmp (nativeip,dest)))){
-            write_pcap_rec_ip(buffer,(size_t) res);
-            //log_android(ANDROID_LOG_DEBUG, "nativeiphandle_tcp %s", nativeip);
-            //log_android(ANDROID_LOG_DEBUG, "nativeiphandle_tcpdest %s", dest);
-        }
-
         if ((pcap_file_tcp != NULL) )
             write_pcap_rec_tcp(buffer,(size_t) res);
+
+        if( (pcap_file_ip != NULL) && (!(strcmp (nativeip,dest))))
+            write_pcap_rec_ip(buffer,(size_t) res);
+
+        if( (pcap_file_port != NULL) &&  (nativeport == dport)){
+            write_pcap_rec_port(buffer,(size_t) res);
+            log_android(ANDROID_LOG_DEBUG, "nativeportreceive %s", nativeport);
+            log_android(ANDROID_LOG_DEBUG, "nativeportreceivedport %s", dport);
+       }
 
 
         if (pcap_file != NULL)
