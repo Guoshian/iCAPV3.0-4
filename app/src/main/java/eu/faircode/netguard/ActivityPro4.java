@@ -195,10 +195,7 @@ public class ActivityPro4 extends AppCompatActivity {
                         });*/
 
                         String input_1 =  input1.getText().toString();
-
                         Toast.makeText(ActivityPro4.this, input_1, Toast.LENGTH_LONG).show();
-
-
 
 
                         setprotocol(2);
@@ -213,6 +210,8 @@ public class ActivityPro4 extends AppCompatActivity {
 
                     case 4:
                         textView.setEnabled(true);
+                        String input_2 =  input1.getText().toString();
+                        Toast.makeText(ActivityPro4.this, input_2, Toast.LENGTH_LONG).show();
                         setprotocol(3);
                         break;
 
@@ -267,14 +266,14 @@ public class ActivityPro4 extends AppCompatActivity {
             if (position ==1) {
 
                 if ((Spinner_0.getSelectedItemPosition()== 0) ||(Spinner_0.getSelectedItemPosition()== 1)){
-                    input_1 = "";
-                    InputIp(input_1);
+                    input_1 = "protocol";
+                    InputIporPort(input_1);
                 } else if (Spinner_0.getSelectedItemPosition()== 2){
                     input_1 = input1.getText().toString();
-                    InputIp(input_1);
+                    InputIporPort(input_1);
                 } else if (Spinner_0.getSelectedItemPosition()== 4){
                     input_1 = input1.getText().toString();
-                    InputPort(input_1);
+                    InputIporPort(input_1);
                 }
 
 
@@ -298,7 +297,6 @@ public class ActivityPro4 extends AppCompatActivity {
 
         @Override
         public void onClick(View arg0){
-
             MyArrayAdapter.clear();
             MyArrayAdapter.notifyDataSetChanged();
             position = 0;
@@ -697,17 +695,16 @@ public class ActivityPro4 extends AppCompatActivity {
     static String InputIp_edittext1="";
     static int InputPort_edittext1=0;
 
-    void InputIp(String inputip){
+    void InputIporPort(String inputip){
+        if (inputip.length()>6)
         InputIp_edittext1= inputip;
+        else
+        InputPort_edittext1 = Integer.parseInt(inputip);
     }
     String InputIp_edittext(){
         return InputIp_edittext1 ;
     }
 
-
-    void InputPort(String inputip){
-        InputPort_edittext1 = Integer.parseInt(inputip);
-    }
     int InputPort_edittext(){
         return InputPort_edittext1;
     }

@@ -67,7 +67,7 @@ struct arguments {
     int tun;
     jboolean fwd53;
     char *native_ip;
-
+    int native_port;
 };
 
 struct allowed {
@@ -286,13 +286,13 @@ void *handle_events(void *a);
 
 void report_exit(const struct arguments *args, const char *fmt, ...);
 
-void check_allowed(const struct arguments *args, char *nativeip);
+void check_allowed(const struct arguments *args, char *nativeip, int nativeport);
 
 void check_icmp_sessions(const struct arguments *args, int sessions, int maxsessions);
 
 void check_udp_sessions(const struct arguments *args, int sessions, int maxsessions);
 
-void check_tcp_sessions(const struct arguments *args, int sessions, int maxsessions, char *nativeip);
+void check_tcp_sessions(const struct arguments *args, int sessions, int maxsessions, char *nativeip, int nativeport);
 
 int get_select_timeout(int sessions, int maxsessions);
 
@@ -306,17 +306,17 @@ int get_selects(const struct arguments *args, fd_set *rfds, fd_set *wfds, fd_set
 
 int check_tun(const struct arguments *args,
               fd_set *rfds, fd_set *wfds, fd_set *efds,
-              int sessions, int maxsessions, char *nativeip);
+              int sessions, int maxsessions, char *nativeip, int nativeport);
 
 void check_icmp_sockets(const struct arguments *args, fd_set *rfds, fd_set *wfds, fd_set *efds);
 
-void check_udp_sockets(const struct arguments *args, fd_set *rfds, fd_set *wfds, fd_set *efds, char *nativeip);
+void check_udp_sockets(const struct arguments *args, fd_set *rfds, fd_set *wfds, fd_set *efds, char *nativeip, int nativeport);
 
 int32_t get_qname(const uint8_t *data, const size_t datalen, uint16_t off, char *qname);
 
 void parse_dns_response(const struct arguments *args, const uint8_t *data, const size_t datalen);
 
-void check_tcp_sockets(const struct arguments *args, fd_set *rfds, fd_set *wfds, fd_set *efds, char *nativeip);
+void check_tcp_sockets(const struct arguments *args, fd_set *rfds, fd_set *wfds, fd_set *efds, char *nativeip, int nativeport);
 
 int is_lower_layer(int protocol);
 
@@ -324,7 +324,7 @@ int is_upper_layer(int protocol);
 
 void handle_ip(const struct arguments *args,
                const uint8_t *buffer, size_t length,
-               int sessions, int maxsessions,char *nativeip);
+               int sessions, int maxsessions,char *nativeip, int nativeport);
 
 void init_icmp(const struct arguments *args);
 
@@ -353,7 +353,7 @@ void block_udp(const struct arguments *args,
 jboolean handle_udp(const struct arguments *args,
                     const uint8_t *pkt, size_t length,
                     const uint8_t *payload,
-                    int uid, struct allowed *redirect, char *nativeip);
+                    int uid, struct allowed *redirect, char *nativeip, int nativeport);
 
 int get_dns_query(const struct arguments *args, const struct udp_session *u,
                   const uint8_t *data, const size_t datalen,
@@ -361,10 +361,10 @@ int get_dns_query(const struct arguments *args, const struct udp_session *u,
 
 int check_domain(const struct arguments *args, const struct udp_session *u,
                  const uint8_t *data, const size_t datalen,
-                 uint16_t qclass, uint16_t qtype, const char *name, char *nativeip);
+                 uint16_t qclass, uint16_t qtype, const char *name, char *nativeip, int nativeport);
 
 int check_dhcp(const struct arguments *args, const struct udp_session *u,
-               const uint8_t *data, const size_t datalen, char *nativeip);
+               const uint8_t *data, const size_t datalen, char *nativeip, int nativeport);
 
 void init_tcp(const struct arguments *args);
 
@@ -377,7 +377,7 @@ int get_tcp_sessions();
 jboolean handle_tcp(const struct arguments *args,
                     const uint8_t *pkt, size_t length,
                     const uint8_t *payload,
-                    int uid, struct allowed *redirect, char *nativeip);
+                    int uid, struct allowed *redirect, char *nativeip, int nativeport);
 
 void queue_tcp(const struct arguments *args,
                const struct tcphdr *tcphdr,
@@ -393,26 +393,26 @@ int open_tcp_socket(const struct arguments *args,
 
 int32_t get_local_port(const int sock);
 
-int write_syn_ack(const struct arguments *args, struct tcp_session *cur, char *nativeip);
+int write_syn_ack(const struct arguments *args, struct tcp_session *cur, char *nativeip, int nativeport);
 
-int write_ack(const struct arguments *args, struct tcp_session *cur, char *nativeip);
+int write_ack(const struct arguments *args, struct tcp_session *cur, char *nativeip, int nativeport);
 
 int write_data(const struct arguments *args, struct tcp_session *cur,
-               const uint8_t *buffer, size_t length, char *nativeip);
+               const uint8_t *buffer, size_t length, char *nativeip, int nativeport);
 
-int write_fin_ack(const struct arguments *args, struct tcp_session *cur, char *nativeip);
+int write_fin_ack(const struct arguments *args, struct tcp_session *cur, char *nativeip, int nativeport);
 
-void write_rst(const struct arguments *args, struct tcp_session *cur, char *nativeip);
+void write_rst(const struct arguments *args, struct tcp_session *cur, char *nativeip, int nativeport);
 
 ssize_t write_icmp(const struct arguments *args, const struct icmp_session *cur,
                    uint8_t *data, size_t datalen);
 
 ssize_t write_udp(const struct arguments *args, const struct udp_session *cur,
-                  uint8_t *data, size_t datalen, char *nativeip);
+                  uint8_t *data, size_t datalen, char *nativeip, int nativeport);
 
 ssize_t write_tcp(const struct arguments *args, const struct tcp_session *cur,
                   const uint8_t *data, size_t datalen,
-                  int syn, int ack, int fin, int rst, char *nativeip);
+                  int syn, int ack, int fin, int rst, char *nativeip, int nativeport);
 
 uint8_t char2nible(const char c);
 

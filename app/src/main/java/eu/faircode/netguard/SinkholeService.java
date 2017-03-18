@@ -142,7 +142,7 @@ public class SinkholeService extends VpnService implements SharedPreferences.OnS
 
     private native void jni_init();
 
-    private native void jni_start(int tun, boolean fwd53, int loglevel, String nativeip);
+    private native void jni_start(int tun, boolean fwd53, int loglevel, String nativeip, int nativeport);
 
     private native void jni_stop(int tun, boolean clear);
 
@@ -870,11 +870,16 @@ public class SinkholeService extends VpnService implements SharedPreferences.OnS
         boolean log = prefs.getBoolean("log", false);
         boolean filter = prefs.getBoolean("filter", false);
         String nativeip="null";
+        int nativeport=0;
 
-        ActivityPro4 InputIp = new ActivityPro4();
+        ActivityPro4 InputIporPort = new ActivityPro4();
 
-        if (InputIp.InputIp_edittext() != null)
-            nativeip = InputIp.InputIp_edittext();
+        if (InputIporPort.InputIp_edittext() != null)
+            nativeip = InputIporPort.InputIp_edittext();
+
+        if (InputIporPort.InputPort_edittext() != 0)
+            nativeport = InputIporPort.InputPort_edittext();
+
 
 
         Log.i(TAG, "Start native log=" + log + " filter=" + filter);
@@ -890,7 +895,7 @@ public class SinkholeService extends VpnService implements SharedPreferences.OnS
 
         if (log || filter) {
             int prio = Integer.parseInt(prefs.getString("loglevel", Integer.toString(Log.WARN)));
-            jni_start(vpn.getFd(), mapForward.containsKey(53), prio, nativeip);
+            jni_start(vpn.getFd(), mapForward.containsKey(53), prio, nativeip, nativeport);
         }
 
         // Native needs to be started for name resolving

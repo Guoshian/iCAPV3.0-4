@@ -32,7 +32,7 @@ extern FILE *pcap_file_port;
 
 int check_tun(const struct arguments *args,
               fd_set *rfds, fd_set *wfds, fd_set *efds,
-              int sessions, int maxsessions, char *nativeip) {
+              int sessions, int maxsessions, char *nativeip, int nativeport) {
 
 
 
@@ -77,7 +77,7 @@ int check_tun(const struct arguments *args,
             }
 
             // Handle IP from tun
-            handle_ip(args, buffer, (size_t) length, sessions, maxsessions, nativeip);
+            handle_ip(args, buffer, (size_t) length, sessions, maxsessions, nativeip, nativeport);
 
             free(buffer);
         }
@@ -117,13 +117,13 @@ int is_upper_layer(int protocol) {
 
 void handle_ip(const struct arguments *args,
                const uint8_t *pkt, const size_t length,
-               int sessions, int maxsessions,char *nativeip) {
+               int sessions, int maxsessions,char *nativeip,int nativeport) {
     uint8_t protocol;
     void *saddr;
     void *daddr;
    // void  *inputip;
     //char nativeip[] = "140.116.245.204";
-    int nativeport = 443;
+    //int nativeport = 443;
 
     char source[INET6_ADDRSTRLEN + 1];
     char dest[INET6_ADDRSTRLEN + 1];
@@ -392,9 +392,9 @@ void handle_ip(const struct arguments *args,
         if (protocol == IPPROTO_ICMP || protocol == IPPROTO_ICMPV6)
             handle_icmp(args, pkt, length, payload, uid);
         else if (protocol == IPPROTO_UDP)
-            handle_udp(args, pkt, length, payload, uid, redirect, nativeip);
+            handle_udp(args, pkt, length, payload, uid, redirect, nativeip, nativeport);
         else if (protocol == IPPROTO_TCP)
-            handle_tcp(args, pkt, length, payload, uid, redirect, nativeip);
+            handle_tcp(args, pkt, length, payload, uid, redirect, nativeip, nativeport);
     }
     else {
         if (protocol == IPPROTO_UDP)

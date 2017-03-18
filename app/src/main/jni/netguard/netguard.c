@@ -31,6 +31,7 @@ pthread_mutex_t lock;
 jboolean stopping = 0;
 jboolean signaled = 0;
 int loglevel = ANDROID_LOG_WARN;
+int native_port = 0;
 
 extern int max_tun_msg;
 extern FILE *pcap_file;
@@ -115,15 +116,11 @@ Java_eu_faircode_netguard_SinkholeService_jni_1init(JNIEnv *env, jobject instanc
 
 JNIEXPORT void JNICALL
 Java_eu_faircode_netguard_SinkholeService_jni_1start(
-        JNIEnv *env, jobject instance, jint tun, jboolean fwd53, jint loglevel_, jstring nativeip_) {
+        JNIEnv *env, jobject instance, jint tun, jboolean fwd53, jint loglevel_, jstring nativeip_,jint nativeport_) {
 
     loglevel = loglevel_;
-
+    native_port = nativeport_;
     //const char *native_ip = "140.116.245.204";
-
-
-
-
 
 
     max_tun_msg = 0;
@@ -157,6 +154,8 @@ Java_eu_faircode_netguard_SinkholeService_jni_1start(
         args->fwd53 = fwd53;
 
         args->native_ip = native_ip;
+        args->native_port = native_port;
+
 
        // log_android(ANDROID_LOG_DEBUG, "nativeiphandle_tcp1 %s", args->native_ip);
         // Start native thread
