@@ -872,14 +872,15 @@ public class SinkholeService extends VpnService implements SharedPreferences.OnS
         String nativeip=" ";
 
         ActivityPro4 InputIp = new ActivityPro4();
-        if (InputIp.InputIp_edittext()==" ")
-            nativeip = " ";
+        //int edittext_length=0;
+        //edittext_length = InputIp.InputIp_edittext().length();
 
-        else
-            nativeip = InputIp.InputIp_edittext();
+        //if (((InputIp.InputIp_edittext()).length())>6)
+           // nativeip = InputIp.InputIp_edittext();
 
+        if (InputIp.InputIp_edittext() != null)
+         nativeip = InputIp.InputIp_edittext();
 
-       //String nativeip = "123";
 
         Log.i(TAG, "Start native log=" + log + " filter=" + filter);
 
