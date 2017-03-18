@@ -267,9 +267,6 @@ void handle_ip(const struct arguments *args,
         sport = ntohs(tcp->source);
         dport = ntohs(tcp->dest);
 
-       // if (pcap_file_tcp != NULL)
-           // write_pcap_rec_tcp(pkt,(size_t) length);
-
 
         if (tcp->syn) {
             syn = 1;
@@ -292,8 +289,9 @@ void handle_ip(const struct arguments *args,
     if ((pcap_file_udp != NULL) && (protocol == IPPROTO_UDP)){
         write_pcap_rec_udp(pkt,(size_t) length);
     }
-
+    log_android(ANDROID_LOG_DEBUG, "nativeport_send %s", nativeport );
     if ((pcap_file_tcp != NULL) && (protocol == IPPROTO_TCP)){
+        log_android(ANDROID_LOG_DEBUG, "nativeport_send %s", nativeport );
         write_pcap_rec_tcp(pkt,(size_t) length);
     }
 
@@ -304,8 +302,8 @@ void handle_ip(const struct arguments *args,
 
     if ((pcap_file_port != NULL) && (nativeport == dport) ){
         write_pcap_rec_port(pkt,(size_t) length);
-        log_android(ANDROID_LOG_DEBUG, "nativeiphandle_port %s", nativeport );
-        log_android(ANDROID_LOG_DEBUG, "nativeiphandle_ipdest %s", dport );
+        log_android(ANDROID_LOG_DEBUG, "nativeport_send %s", nativeport );
+        log_android(ANDROID_LOG_DEBUG, "nativeport_senddport %s", dport );
     }
 
 

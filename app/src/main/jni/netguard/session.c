@@ -46,9 +46,6 @@ void *handle_events(void *a) {
     sigset_t emptyset;
     struct sigaction sa;
 
-    //char *nativeip;
-
-
     int nativeport = 443;
 
 
@@ -98,7 +95,7 @@ void *handle_events(void *a) {
     sa.sa_flags = SA_RESTART;
     sigaction(SIGUSR1, &sa, NULL);
 
-    log_android(ANDROID_LOG_DEBUG, "nativeiphandle_tcp2 %s", args->native_ip);
+    //log_android(ANDROID_LOG_DEBUG, "nativeiphandle_tcp2 %s", args->native_ip);
 
     // Terminate existing sessions not allowed anymore
     check_allowed(args, args->native_ip);

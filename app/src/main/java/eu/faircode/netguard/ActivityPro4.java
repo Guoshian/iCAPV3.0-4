@@ -162,7 +162,7 @@ public class ActivityPro4 extends AppCompatActivity {
                         //String input_ip1 =  input1.getText().toString();
                         //Toast.makeText(ActivityPro4.this, input_ip1, Toast.LENGTH_LONG).show();
 
-                        setprotocol(0,"");
+                        setprotocol(0);
 
                         break;
 
@@ -173,14 +173,14 @@ public class ActivityPro4 extends AppCompatActivity {
                         //input_ip1 =  input1.getText().toString();
                         //Toast.makeText(ActivityPro4.this, input_ip1, Toast.LENGTH_LONG).show();
 
-                        setprotocol(1,"");
+                        setprotocol(1);
 
                         break;
 
                     case 2:
                         textView.setEnabled(true);
                         //textView.setText("");
-                        input1.setOnEditorActionListener(new TextView.OnEditorActionListener(){
+                        /*input1.setOnEditorActionListener(new TextView.OnEditorActionListener(){
                             @Override
                             public boolean onEditorAction(TextView v, int actionId, KeyEvent event){
 
@@ -192,27 +192,33 @@ public class ActivityPro4 extends AppCompatActivity {
                             }
 
 
-                        });
+                        });*/
+
+                        String input_ip1 =  input1.getText().toString();
+
+                        Toast.makeText(ActivityPro4.this, input_ip1, Toast.LENGTH_LONG).show();
 
 
-                        setprotocol(2, input1.getText().toString());
+
+
+                        setprotocol(2);
 
                         break;
 
 
                     case 3:
                         textView.setEnabled(true);
-                        //textView.setText("");
+                        textView.setText("");
                         break;
 
                     case 4:
                         textView.setEnabled(true);
-                        setprotocol(3,"");
+                        setprotocol(3);
                         break;
 
                     case 5:
                         textView.setEnabled(true);
-                        //textView.setText("");
+                        textView.setText("");
                         break;
 
 
@@ -297,7 +303,7 @@ public class ActivityPro4 extends AppCompatActivity {
 
 
 
-    private void setprotocol(final int pro,final String input){
+    private void setprotocol(final int pro){
 
         capture.setOnClickListener(new Button.OnClickListener() {
 
@@ -316,8 +322,6 @@ public class ActivityPro4 extends AppCompatActivity {
                 }
                 else if (pro == 2){
 
-                    //String input_ip1 =  input1.getText().toString();
-
                     final File pcap_file_ip = new File(getCacheDir(), "netguardip.pcap");
                     SinkholeService.setPcapip(pcap_file_ip);
                     startActivityForResult(getIntentPCAPDocument(pro), REQUEST_PCAPip);
@@ -326,10 +330,7 @@ public class ActivityPro4 extends AppCompatActivity {
 
                 }
 
-
                 else if (pro == 3){
-
-                    //String input_ip1 =  input1.getText().toString();
 
                     final File pcap_file_port = new File(getCacheDir(), "netguardport.pcap");
                     SinkholeService.setPcapport(pcap_file_port);

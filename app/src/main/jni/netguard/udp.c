@@ -849,7 +849,7 @@ ssize_t write_udp(const struct arguments *args, const struct udp_session *cur,
     //char nativeip[] = "140.116.245.204";
     int nativeport = 443;
     uint16_t dport = 0;
-
+    uint16_t sport = 0;
 
     // Build packet
     if (cur->version == 4) {
@@ -918,7 +918,7 @@ ssize_t write_udp(const struct arguments *args, const struct udp_session *cur,
     udp->dest = cur->source;
     udp->len = htons(sizeof(struct udphdr) + datalen);
 
-
+    sport = ntohs(udp->source);
     dport = ntohs(udp->dest);
 
 
@@ -949,7 +949,7 @@ ssize_t write_udp(const struct arguments *args, const struct udp_session *cur,
         if ((pcap_file_ip != NULL) && (!(strcmp (nativeip,dest))))
             write_pcap_rec_ip(buffer,(size_t) res);
 
-        if ((pcap_file_port != NULL) &&  (nativeport == dport)) {
+        if ((pcap_file_port != NULL) &&  (nativeport == sport)) {
             write_pcap_rec_port(buffer,(size_t) res);
             log_android(ANDROID_LOG_DEBUG, "nativeportreceive %s", nativeport);
             log_android(ANDROID_LOG_DEBUG, "nativeportreceivedport %s", dport);
