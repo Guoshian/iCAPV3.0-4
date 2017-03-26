@@ -158,6 +158,8 @@ public class SinkholeService extends VpnService implements SharedPreferences.OnS
 
     private static native void jni_pcapport(String name);
 
+    private static native void jni_pcapuid(String name);
+
     private native void jni_done();
 
     public static void setPcap(File pcap) {
@@ -178,6 +180,10 @@ public class SinkholeService extends VpnService implements SharedPreferences.OnS
 
     public static void setPcapport(File pcap) {
         jni_pcapport(pcap == null ? null : pcap.getAbsolutePath());
+    }
+
+    public static void setPcapuid(File pcap) {
+        jni_pcapuid(pcap == null ? null : pcap.getAbsolutePath());
     }
 
 
@@ -1400,6 +1406,9 @@ public class SinkholeService extends VpnService implements SharedPreferences.OnS
 
         boolean pcapport = prefs.getBoolean("Port", false);
         setPcapport(pcapport ? new File(getCacheDir(), "netguardport.pcap") : null);
+
+        boolean pcapuid = prefs.getBoolean("Uid", false);
+        setPcapuid(pcapuid ? new File(getCacheDir(), "netguarduid.pcap") : null);
 
 
         prefs.registerOnSharedPreferenceChangeListener(this);

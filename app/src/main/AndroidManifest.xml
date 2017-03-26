@@ -157,7 +157,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ActivityMain" />
         </activity>
-
         <activity
             android:name=".ActivityPro4"
             android:configChanges="orientation|screenSize"
@@ -165,12 +164,17 @@
             android:parentActivityName=".ActivityMain">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ActivityMain"/>
-
-
+                android:value=".ActivityMain" />
         </activity>
-
-
+        <activity
+            android:name=".ActivityPro5"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/title_pro5"
+            android:parentActivityName=".ActivityMain">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ActivityMain" />
+        </activity>
     </application>
 
 </manifest>

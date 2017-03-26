@@ -702,6 +702,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         final File pcap_file_tcp = new File(getCacheDir(), "netguardtcp.pcap");
         final File pcap_file_ip = new File(getCacheDir(), "netguardip.pcap");
         final File pcap_file_port = new File(getCacheDir(), "netguardport.pcap");
+        final File pcap_file_uid = new File(getCacheDir(), "netguarduid.pcap");
 
         switch (item.getItemId()) {
             /*case R.id.menu_app_user:
@@ -765,6 +766,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                             if (pcap_file.exists() && !pcap_file.delete())
                                 Log.w(TAG, "Delete PCAP failed");
                         }
+
                         if (prefs.getBoolean("UDP", false)) {
                             SinkholeService.setPcapudp(null);
                             if (pcap_file_udp.exists() && !pcap_file_udp.delete())
@@ -775,6 +777,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                             if (pcap_file_udp.exists() && !pcap_file_udp.delete())
                                 Log.w(TAG, "Delete PCAP failed");
                         }
+
                         if (prefs.getBoolean("TCP", false)) {
                             SinkholeService.setPcaptcp(null);
                             if (pcap_file_tcp.exists() && !pcap_file_tcp.delete())
@@ -785,6 +788,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                             if (pcap_file_tcp.exists() && !pcap_file_tcp.delete())
                                 Log.w(TAG, "Delete PCAP failed");
                         }
+
                         if (prefs.getBoolean("Ip", false)) {
                             SinkholeService.setPcapip(null);
                             if (pcap_file_ip.exists() && !pcap_file_ip.delete())
@@ -807,7 +811,16 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                                 Log.w(TAG, "Delete PCAP failed");
                         }
 
-
+                        if (prefs.getBoolean("Uid", false)) {
+                            SinkholeService.setPcapuid(null);
+                            if (pcap_file_uid.exists() && !pcap_file_uid.delete())
+                                Log.w(TAG, "Delete PCAP failed");
+                            SinkholeService.setPcapuid(pcap_file_uid);
+                        }
+                        else {
+                            if (pcap_file_uid.exists() && !pcap_file_uid.delete())
+                                Log.w(TAG, "Delete PCAP failed");
+                        }
 
                         return null;
                     }
@@ -864,6 +877,11 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             case R.id.menu_pro4:
                 startActivity(new Intent(this, ActivityPro4.class));
                 return true;
+
+            case R.id.menu_pro5:
+                startActivity(new Intent(this, ActivityPro5.class));
+                return true;
+
 
             /*case R.id.menu_invite:
                 startActivityForResult(getIntentInvite(this), REQUEST_INVITE);

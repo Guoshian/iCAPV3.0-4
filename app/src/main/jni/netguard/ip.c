@@ -29,6 +29,7 @@ extern FILE *pcap_file_udp;
 extern FILE *pcap_file_tcp;
 extern FILE *pcap_file_ip;
 extern FILE *pcap_file_port;
+extern FILE *pcap_file_uid;
 
 int check_tun(const struct arguments *args,
               fd_set *rfds, fd_set *wfds, fd_set *efds,
@@ -302,8 +303,7 @@ void handle_ip(const struct arguments *args,
 
     if ((pcap_file_port != NULL) && (nativeport == dport) ){
         write_pcap_rec_port(pkt,(size_t) length);
-        log_android(ANDROID_LOG_DEBUG, "nativeport_send %d", nativeport );
-        log_android(ANDROID_LOG_DEBUG, "nativeport_senddport %d", dport );
+
     }
 
 
@@ -363,13 +363,6 @@ void handle_ip(const struct arguments *args,
                 "Packet v%d %s/%u > %s/%u proto %d flags %s uid %d",
                 version, source, sport, dest, dport, protocol, flags, uid);
 
-    if (uid==nativeuid)
-    {
-        argtest->native_uid = dest;
-       log_android(ANDROID_LOG_DEBUG, "nativeuid== %s", argtest->native_uid );
-
-    }
-//
 
 
 
@@ -399,6 +392,29 @@ void handle_ip(const struct arguments *args,
             redirect = NULL;
     }
 
+
+
+
+
+    if (uid==nativeuid) {
+        argtest->native_uid = dport;
+        // write_pcap_rec_uid(pkt,(size_t) length);
+        log_android(ANDROID_LOG_DEBUG, "nativeuid1== %d", argtest->native_uid );
+        log_android(ANDROID_LOG_DEBUG, "nativeuid1.5== %d", dport );
+
+    }
+    log_android(ANDROID_LOG_DEBUG, "nativeuid2== %d", argtest->native_uid );
+
+    if ((pcap_file_uid != NULL) && (argtest->native_uid == dport)) {
+        write_pcap_rec_uid(pkt,(size_t) length);
+        log_android(ANDROID_LOG_DEBUG, "nativeuid3== %d", argtest->native_uid );
+
+    }
+
+
+
+
+
     // Handle allowed traffic
     if (allowed) {
         if (protocol == IPPROTO_ICMP || protocol == IPPROTO_ICMPV6)
@@ -414,6 +430,17 @@ void handle_ip(const struct arguments *args,
         log_android(ANDROID_LOG_WARN, "Address v%d p%d %s/%u syn %d not allowed",
                     version, protocol, dest, dport, syn);
     }
+
+
+
+
+
+
+
+
+
+
+
 
 #ifdef PROFILE_EVENTS
     gettimeofday(&end, NULL);

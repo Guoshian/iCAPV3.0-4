@@ -194,8 +194,8 @@ Your internet traffic is not being sent to a remote VPN server.</string>
   <string name="title_pro1">Capture for Condition</string>
   <string name="title_pro2">Capture for App</string>
   <string name="title_pro3">Capture for another</string>
-  <string name="title_pro4">Capture for test</string>
-
+  <string name="title_pro4">Capture for filter</string>
+  <string name="title_pro5">Capture for uid</string>
 
   <string-array name="themeNames">
     <item>藍綠 / 橙</item>

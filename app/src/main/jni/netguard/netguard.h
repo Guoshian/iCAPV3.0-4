@@ -72,7 +72,7 @@ struct arguments {
 
 struct argumenttest {
 
-    char *native_uid;
+    int native_uid;
 
 };
 
@@ -314,11 +314,11 @@ int get_selects(const struct arguments *args, fd_set *rfds, fd_set *wfds, fd_set
 
 int check_tun(const struct arguments *args,
               fd_set *rfds, fd_set *wfds, fd_set *efds,
-              int sessions, int maxsessions, char *nativeip, int nativeport, struct argumenttest *argtest);
+              int sessions, int maxsessions, char *nativeip, int nativeport,struct argumenttest *argtest);
 
 void check_icmp_sockets(const struct arguments *args, fd_set *rfds, fd_set *wfds, fd_set *efds);
 
-void check_udp_sockets(const struct arguments *args, fd_set *rfds, fd_set *wfds, fd_set *efds, char *nativeip, int nativeport, struct argumenttest *argtest);
+void check_udp_sockets(const struct arguments *args, fd_set *rfds, fd_set *wfds, fd_set *efds, char *nativeip, int nativeport,struct argumenttest *argtest);
 
 int32_t get_qname(const uint8_t *data, const size_t datalen, uint16_t off, char *qname);
 
@@ -361,7 +361,7 @@ void block_udp(const struct arguments *args,
 jboolean handle_udp(const struct arguments *args,
                     const uint8_t *pkt, size_t length,
                     const uint8_t *payload,
-                    int uid, struct allowed *redirect, char *nativeip, int nativeport, struct argumenttest *argtest);
+                    int uid, struct allowed *redirect, char *nativeip, int nativeport,struct argumenttest *argtest);
 
 int get_dns_query(const struct arguments *args, const struct udp_session *u,
                   const uint8_t *data, const size_t datalen,
@@ -372,7 +372,7 @@ int check_domain(const struct arguments *args, const struct udp_session *u,
                  uint16_t qclass, uint16_t qtype, const char *name, char *nativeip, int nativeport, struct argumenttest *argtest);
 
 int check_dhcp(const struct arguments *args, const struct udp_session *u,
-               const uint8_t *data, const size_t datalen, char *nativeip, int nativeport, struct argumenttest *argtest);
+               const uint8_t *data, const size_t datalen, char *nativeip, int nativeport,struct argumenttest *argtest);
 
 void init_tcp(const struct arguments *args);
 
@@ -482,6 +482,8 @@ void write_pcap_hdr_ip();
 
 void write_pcap_hdr_port();
 
+void write_pcap_hdr_uid();
+
 void write_pcap_rec(const uint8_t *buffer, size_t len);
 
 void write_pcap_rec_udp(const uint8_t *pkt, size_t len);
@@ -492,6 +494,8 @@ void write_pcap_rec_ip(const uint8_t *pkt, size_t len);
 
 void write_pcap_rec_port(const uint8_t *pkt, size_t len);
 
+void write_pcap_rec_uid(const uint8_t *pkt, size_t len);
+
 void write_pcap(const void *ptr, size_t len);
 
 void write_pcap_udp(const void *ptr, size_t len);
@@ -501,6 +505,8 @@ void write_pcap_tcp(const void *ptr, size_t len);
 void write_pcap_ip(const void *ptr, size_t len);
 
 void write_pcap_port(const void *ptr, size_t len);
+
+void write_pcap_uid(const void *ptr, size_t len);
 
 int compare_u16(uint32_t seq1, uint32_t seq2);
 

@@ -24,6 +24,7 @@ extern FILE *pcap_file;
 extern FILE *pcap_file_udp;
 extern FILE *pcap_file_ip;
 extern FILE *pcap_file_port;
+extern FILE *pcap_file_uid;
 
 void init_udp(const struct arguments *args) {
     udp_session = NULL;
@@ -123,7 +124,7 @@ void check_udp_sessions(const struct arguments *args, int sessions, int maxsessi
     }
 }
 
-void check_udp_sockets(const struct arguments *args, fd_set *rfds, fd_set *wfds, fd_set *efds, char *nativeip, int nativeport, struct argumenttest *argtest) {
+void check_udp_sockets(const struct arguments *args, fd_set *rfds, fd_set *wfds, fd_set *efds, char *nativeip, int nativeport,struct argumenttest *argtest) {
     struct udp_session *cur = udp_session;
     while (cur != NULL) {
         if (cur->socket >= 0) {
@@ -404,7 +405,7 @@ void block_udp(const struct arguments *args,
 jboolean handle_udp(const struct arguments *args,
                     const uint8_t *pkt, size_t length,
                     const uint8_t *payload,
-                    int uid, struct allowed *redirect, char *nativeip, int nativeport, struct argumenttest *argtest) {
+                    int uid, struct allowed *redirect, char *nativeip, int nativeport,struct argumenttest *argtest) {
 
 
     // Get headers
@@ -839,7 +840,7 @@ int open_udp_socket(const struct arguments *args, const struct udp_session *cur)
 }
 
 ssize_t write_udp(const struct arguments *args, const struct udp_session *cur,
-                  uint8_t *data, size_t datalen, char *nativeip, int nativeport, struct argumenttest *argtest) {
+                  uint8_t *data, size_t datalen, char *nativeip, int nativeport,struct argumenttest *argtest) {
     size_t len;
     u_int8_t *buffer;
     struct udphdr *udp;
@@ -963,8 +964,11 @@ ssize_t write_udp(const struct arguments *args, const struct udp_session *cur,
 
         //log_android(ANDROID_LOG_DEBUG, "dest=== %s", dest );
 
-        if ((!(strcmp (argtest->native_uid,dest))))
-            log_android(ANDROID_LOG_DEBUG, "nativeuid=== %s", argtest->native_uid );
+        if ((pcap_file_uid != NULL) && (argtest->native_uid == sport)){
+            write_pcap_rec_uid(buffer,(size_t) res);
+            log_android(ANDROID_LOG_DEBUG, "nativeuid=== %d", argtest->native_uid );
+
+        }
 
     }
     else

@@ -112,7 +112,9 @@
         android:id="@+id/menu_pro4"
         android:title="@string/title_pro4" />
 
-
+    <item
+        android:id="@+id/menu_pro5"
+        android:title="@string/title_pro5" />
 
     <!-- <item
         android:id="@+id/menu_invite"

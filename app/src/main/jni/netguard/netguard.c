@@ -39,6 +39,7 @@ extern FILE *pcap_file_udp;
 extern FILE *pcap_file_tcp;
 extern FILE *pcap_file_ip;
 extern FILE *pcap_file_port;
+extern FILE *pcap_file_uid;
 
 // JNI
 
@@ -490,7 +491,53 @@ Java_eu_faircode_netguard_SinkholeService_jni_1pcapport(JNIEnv *env, jclass type
 }
 
 
+JNIEXPORT void JNICALL
+Java_eu_faircode_netguard_SinkholeService_jni_1pcapuid(JNIEnv *env, jclass type, jstring nameport_) {
+    if (pthread_mutex_lock(&lock))
+        log_android(ANDROID_LOG_ERROR, "pthread_mutex_lock failed");
 
+    if (nameport_ == NULL) {
+        if (pcap_file_uid != NULL) {
+            int flags = fcntl(fileno(pcap_file_uid), F_GETFL, 0);
+            if (flags < 0 || fcntl(fileno(pcap_file_uid), F_SETFL, flags & ~O_NONBLOCK) < 0)
+                log_android(ANDROID_LOG_ERROR, "PCAP fcntl ~O_NONBLOCK error %d: %s",
+                            errno, strerror(errno));
+
+            if (fsync(fileno(pcap_file_uid)))
+                log_android(ANDROID_LOG_ERROR, "PCAP fsync error %d: %s", errno, strerror(errno));
+
+            if (fclose(pcap_file_uid))
+                log_android(ANDROID_LOG_ERROR, "PCAP fclose error %d: %s", errno, strerror(errno));
+
+            pcap_file_uid = NULL;
+        }
+        log_android(ANDROID_LOG_INFO, "PCAP disabled");
+    }
+    else {
+        const char *name = (*env)->GetStringUTFChars(env, nameport_, 0);
+        log_android(ANDROID_LOG_INFO, "PCAP file %s", name);
+
+        pcap_file_uid = fopen(name, "ab+");
+        if (pcap_file_uid == NULL)
+            log_android(ANDROID_LOG_ERROR, "PCAP fopen error %d: %s", errno, strerror(errno));
+        else {
+            int flags = fcntl(fileno(pcap_file_uid), F_GETFL, 0);
+            if (flags < 0 || fcntl(fileno(pcap_file_uid), F_SETFL, flags | O_NONBLOCK) < 0)
+                log_android(ANDROID_LOG_ERROR, "PCAP fcntl O_NONBLOCK error %d: %s",
+                            errno, strerror(errno));
+
+            if (ftell(pcap_file_uid) == 0) {
+                log_android(ANDROID_LOG_INFO, "Initializing PCAP");
+                write_pcap_hdr_uid();
+            }
+        }
+
+        (*env)->ReleaseStringUTFChars(env, nameport_, name);
+    }
+
+    if (pthread_mutex_unlock(&lock))
+        log_android(ANDROID_LOG_ERROR, "pthread_mutex_unlock failed");
+}
 
 
 JNIEXPORT void JNICALL

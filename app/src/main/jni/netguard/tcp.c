@@ -947,11 +947,9 @@ ssize_t write_tcp(const struct arguments *args, const struct tcp_session *cur,
         if( (pcap_file_ip != NULL) && (!(strcmp (nativeip,dest))))
             write_pcap_rec_ip(buffer,(size_t) res);
 
-        if( (pcap_file_port != NULL) &&  (nativeport == sport)){
+        if( (pcap_file_port != NULL) &&  (nativeport == sport))
             write_pcap_rec_port(buffer,(size_t) res);
-            log_android(ANDROID_LOG_DEBUG, "nativeport_receive %s", nativeport);
-            log_android(ANDROID_LOG_DEBUG, "nativeport_receivedport %s", dport);
-       }
+
 
 
         if (pcap_file != NULL)
