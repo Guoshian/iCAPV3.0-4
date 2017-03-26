@@ -116,10 +116,13 @@ Java_eu_faircode_netguard_SinkholeService_jni_1init(JNIEnv *env, jobject instanc
 
 JNIEXPORT void JNICALL
 Java_eu_faircode_netguard_SinkholeService_jni_1start(
-        JNIEnv *env, jobject instance, jint tun, jboolean fwd53, jint loglevel_, jstring nativeip_,jint nativeport_) {
+        JNIEnv *env, jobject instance, jint tun, jboolean fwd53, jint loglevel_, jstring nativeip_, jint nativeport_) {
 
     loglevel = loglevel_;
     native_port = nativeport_;
+
+    //native_port = 5201;
+
     //const char *native_ip = "140.116.245.204";
 
 

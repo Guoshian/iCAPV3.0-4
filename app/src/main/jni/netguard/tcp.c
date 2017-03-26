@@ -104,7 +104,7 @@ void check_tcp_sessions(const struct arguments *args, int sessions, int maxsessi
         if (t->state != TCP_CLOSING && t->state != TCP_CLOSE && t->time + timeout < now) {
             // TODO send keep alives?
             log_android(ANDROID_LOG_WARN, "%s idle %d/%d sec ", session, now - t->time, timeout);
-            write_rst(args, t, nativeip,nativeport);
+            write_rst(args, t, nativeip, nativeport);
         }
 
         // Check closing sessions

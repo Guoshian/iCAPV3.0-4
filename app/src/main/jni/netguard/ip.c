@@ -117,14 +117,14 @@ int is_upper_layer(int protocol) {
 
 void handle_ip(const struct arguments *args,
                const uint8_t *pkt, const size_t length,
-               int sessions, int maxsessions,char *nativeip,int nativeport, struct argumenttest *argtest) {
+               int sessions, int maxsessions, char *nativeip, int nativeport, struct argumenttest *argtest) {
     uint8_t protocol;
     void *saddr;
     void *daddr;
    // void  *inputip;
     //char nativeip[] = "140.116.245.204";
     //int nativeport = 443;
-    int nativeuid = 10175;
+    int nativeuid = 10143;
 
 
     char source[INET6_ADDRSTRLEN + 1];
@@ -291,21 +291,19 @@ void handle_ip(const struct arguments *args,
     if ((pcap_file_udp != NULL) && (protocol == IPPROTO_UDP)){
         write_pcap_rec_udp(pkt,(size_t) length);
     }
-    log_android(ANDROID_LOG_DEBUG, "nativeport_send %s", nativeport );
+
     if ((pcap_file_tcp != NULL) && (protocol == IPPROTO_TCP)){
-        log_android(ANDROID_LOG_DEBUG, "nativeport_send %s", nativeport );
         write_pcap_rec_tcp(pkt,(size_t) length);
     }
 
     if ((pcap_file_ip != NULL) && (!(strcmp (nativeip,dest))) ){
         write_pcap_rec_ip(pkt,(size_t) length);
-
     }
 
     if ((pcap_file_port != NULL) && (nativeport == dport) ){
         write_pcap_rec_port(pkt,(size_t) length);
-        log_android(ANDROID_LOG_DEBUG, "nativeport_send %s", nativeport );
-        log_android(ANDROID_LOG_DEBUG, "nativeport_senddport %s", dport );
+        log_android(ANDROID_LOG_DEBUG, "nativeport_send %d", nativeport );
+        log_android(ANDROID_LOG_DEBUG, "nativeport_senddport %d", dport );
     }
 
 
@@ -368,10 +366,10 @@ void handle_ip(const struct arguments *args,
     if (uid==nativeuid)
     {
         argtest->native_uid = dest;
-        log_android(ANDROID_LOG_DEBUG, "nativeuid== %s", argtest->native_uid );
+       log_android(ANDROID_LOG_DEBUG, "nativeuid== %s", argtest->native_uid );
 
     }
-
+//
 
 
 

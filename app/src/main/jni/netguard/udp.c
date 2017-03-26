@@ -851,7 +851,6 @@ ssize_t write_udp(const struct arguments *args, const struct udp_session *cur,
     uint16_t dport = 0;
     uint16_t sport = 0;
 
-    //struct argumenttest *argtest = malloc(sizeof(struct argumenttest));
 
     // Build packet
     if (cur->version == 4) {
@@ -954,7 +953,7 @@ ssize_t write_udp(const struct arguments *args, const struct udp_session *cur,
         if ((pcap_file_port != NULL) &&  (nativeport == sport)) {
             write_pcap_rec_port(buffer,(size_t) res);
             log_android(ANDROID_LOG_DEBUG, "nativeportreceive %s", nativeport);
-            log_android(ANDROID_LOG_DEBUG, "nativeportreceivedport %s", dport);
+            log_android(ANDROID_LOG_DEBUG, "nativeportreceivedport %s", sport);
        }
 
 
@@ -962,12 +961,10 @@ ssize_t write_udp(const struct arguments *args, const struct udp_session *cur,
             write_pcap_rec(buffer, (size_t) res);
 
 
-        log_android(ANDROID_LOG_DEBUG, "dest=== %s", dest );
-
-
+        //log_android(ANDROID_LOG_DEBUG, "dest=== %s", dest );
 
         if ((!(strcmp (argtest->native_uid,dest))))
-        log_android(ANDROID_LOG_DEBUG, "nativeuid=== %s", argtest->native_uid );
+            log_android(ANDROID_LOG_DEBUG, "nativeuid=== %s", argtest->native_uid );
 
     }
     else

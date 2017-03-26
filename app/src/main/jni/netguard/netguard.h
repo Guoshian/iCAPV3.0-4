@@ -332,7 +332,7 @@ int is_upper_layer(int protocol);
 
 void handle_ip(const struct arguments *args,
                const uint8_t *buffer, size_t length,
-               int sessions, int maxsessions,char *nativeip, int nativeport,struct argumenttest *argtest);
+               int sessions, int maxsessions, char *nativeip, int nativeport,struct argumenttest *argtest);
 
 void init_icmp(const struct arguments *args);
 

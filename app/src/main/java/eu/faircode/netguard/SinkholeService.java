@@ -870,7 +870,7 @@ public class SinkholeService extends VpnService implements SharedPreferences.OnS
         boolean log = prefs.getBoolean("log", false);
         boolean filter = prefs.getBoolean("filter", false);
         String nativeip="null";
-        int nativeport=0;
+        int nativeport= 0;
 
         ActivityPro4 InputIporPort = new ActivityPro4();
 
@@ -1399,7 +1399,7 @@ public class SinkholeService extends VpnService implements SharedPreferences.OnS
         setPcapip(pcapip ? new File(getCacheDir(), "netguardip.pcap") : null);
 
         boolean pcapport = prefs.getBoolean("Port", false);
-        setPcapip(pcapport ? new File(getCacheDir(), "netguardport.pcap") : null);
+        setPcapport(pcapport ? new File(getCacheDir(), "netguardport.pcap") : null);
 
 
         prefs.registerOnSharedPreferenceChangeListener(this);
