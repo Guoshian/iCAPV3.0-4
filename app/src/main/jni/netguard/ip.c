@@ -32,7 +32,7 @@ extern FILE *pcap_file_port;
 
 int check_tun(const struct arguments *args,
               fd_set *rfds, fd_set *wfds, fd_set *efds,
-              int sessions, int maxsessions, char *nativeip, int nativeport) {
+              int sessions, int maxsessions, char *nativeip, int nativeport, struct argumenttest *argtest) {
 
 
 
@@ -77,7 +77,7 @@ int check_tun(const struct arguments *args,
             }
 
             // Handle IP from tun
-            handle_ip(args, buffer, (size_t) length, sessions, maxsessions, nativeip, nativeport);
+            handle_ip(args, buffer, (size_t) length, sessions, maxsessions, nativeip, nativeport, argtest);
 
             free(buffer);
         }
@@ -117,13 +117,15 @@ int is_upper_layer(int protocol) {
 
 void handle_ip(const struct arguments *args,
                const uint8_t *pkt, const size_t length,
-               int sessions, int maxsessions,char *nativeip,int nativeport) {
+               int sessions, int maxsessions,char *nativeip,int nativeport, struct argumenttest *argtest) {
     uint8_t protocol;
     void *saddr;
     void *daddr;
    // void  *inputip;
     //char nativeip[] = "140.116.245.204";
     //int nativeport = 443;
+    int nativeuid = 10175;
+
 
     char source[INET6_ADDRSTRLEN + 1];
     char dest[INET6_ADDRSTRLEN + 1];
@@ -363,6 +365,18 @@ void handle_ip(const struct arguments *args,
                 "Packet v%d %s/%u > %s/%u proto %d flags %s uid %d",
                 version, source, sport, dest, dport, protocol, flags, uid);
 
+    if (uid==nativeuid)
+    {
+        argtest->native_uid = dest;
+        log_android(ANDROID_LOG_DEBUG, "nativeuid== %s", argtest->native_uid );
+
+    }
+
+
+
+
+
+
 #ifdef PROFILE_EVENTS
     gettimeofday(&end, NULL);
     mselapsed = (end.tv_sec - start.tv_sec) * 1000.0 +
@@ -392,7 +406,7 @@ void handle_ip(const struct arguments *args,
         if (protocol == IPPROTO_ICMP || protocol == IPPROTO_ICMPV6)
             handle_icmp(args, pkt, length, payload, uid);
         else if (protocol == IPPROTO_UDP)
-            handle_udp(args, pkt, length, payload, uid, redirect, nativeip, nativeport);
+            handle_udp(args, pkt, length, payload, uid, redirect, nativeip, nativeport, argtest);
         else if (protocol == IPPROTO_TCP)
             handle_tcp(args, pkt, length, payload, uid, redirect, nativeip, nativeport);
     }

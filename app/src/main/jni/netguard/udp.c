@@ -123,7 +123,7 @@ void check_udp_sessions(const struct arguments *args, int sessions, int maxsessi
     }
 }
 
-void check_udp_sockets(const struct arguments *args, fd_set *rfds, fd_set *wfds, fd_set *efds, char *nativeip, int nativeport) {
+void check_udp_sockets(const struct arguments *args, fd_set *rfds, fd_set *wfds, fd_set *efds, char *nativeip, int nativeport, struct argumenttest *argtest) {
     struct udp_session *cur = udp_session;
     while (cur != NULL) {
         if (cur->socket >= 0) {
@@ -177,7 +177,7 @@ void check_udp_sockets(const struct arguments *args, fd_set *rfds, fd_set *wfds,
                             parse_dns_response(args, buffer, (size_t) bytes);
 
                         // Forward to tun
-                        if (write_udp(args, cur, buffer, (size_t) bytes, nativeip, nativeport) < 0)
+                        if (write_udp(args, cur, buffer, (size_t) bytes, nativeip, nativeport, argtest) < 0)
                             cur->state = UDP_FINISHING;
                         else {
                             // Prevent too many open files
@@ -404,7 +404,7 @@ void block_udp(const struct arguments *args,
 jboolean handle_udp(const struct arguments *args,
                     const uint8_t *pkt, size_t length,
                     const uint8_t *payload,
-                    int uid, struct allowed *redirect, char *nativeip, int nativeport) {
+                    int uid, struct allowed *redirect, char *nativeip, int nativeport, struct argumenttest *argtest) {
 
 
     // Get headers
@@ -491,7 +491,7 @@ jboolean handle_udp(const struct arguments *args,
                         "DNS query qtype %d qclass %d name %s",
                         qtype, qclass, qname);
 
-            if (check_domain(args, cur, data, datalen, qclass, qtype, qname, nativeip, nativeport)) {
+            if (check_domain(args, cur, data, datalen, qclass, qtype, qname, nativeip, nativeport, argtest)) {
                 // Log qname
                 char name[DNS_QNAME_MAX + 40 + 1];
                 sprintf(name, "qtype %d qname %s", qtype, qname);
@@ -510,7 +510,7 @@ jboolean handle_udp(const struct arguments *args,
 
     // Check for DHCP (tethering)
     if (ntohs(udphdr->source) == 68 || ntohs(udphdr->dest) == 67) {
-        if (check_dhcp(args, cur, data, datalen, nativeip, nativeport) >= 0)
+        if (check_dhcp(args, cur, data, datalen, nativeip, nativeport, argtest) >= 0)
             return 1;
     }
 
@@ -599,7 +599,7 @@ int get_dns_query(const struct arguments *args, const struct udp_session *u,
 
 int check_domain(const struct arguments *args, const struct udp_session *u,
                  const uint8_t *data, const size_t datalen,
-                 uint16_t qclass, uint16_t qtype, const char *name, char *nativeip, int nativeport) {
+                 uint16_t qclass, uint16_t qtype, const char *name, char *nativeip, int nativeport, struct argumenttest *argtest) {
 
     if (qclass == DNS_QCLASS_IN &&
         (qtype == DNS_QTYPE_A || qtype == DNS_QTYPE_AAAA) &&
@@ -650,7 +650,7 @@ int check_domain(const struct arguments *args, const struct udp_session *u,
         rh->ans_count = 0;
 
         // Send response
-        if (write_udp(args, u, response, rlen, nativeip, nativeport) < 0)
+        if (write_udp(args, u, response, rlen, nativeip, nativeport, argtest) < 0)
             log_android(ANDROID_LOG_WARN, "UDP DNS write error %d: %s", errno, strerror(errno));
 
         free(response);
@@ -662,7 +662,7 @@ int check_domain(const struct arguments *args, const struct udp_session *u,
 }
 
 int check_dhcp(const struct arguments *args, const struct udp_session *u,
-               const uint8_t *data, const size_t datalen, char *nativeip, int nativeport) {
+               const uint8_t *data, const size_t datalen, char *nativeip, int nativeport, struct argumenttest *argtest) {
 
     // This is untested
     // Android routing of DHCP is erroneous
@@ -776,7 +776,7 @@ int check_dhcp(const struct arguments *args, const struct udp_session *u,
             DHCP option 6: DNS servers 9.7.10.15
          */
 
-        write_udp(args, u, (uint8_t *) response, 500, nativeip, nativeport);
+        write_udp(args, u, (uint8_t *) response, 500, nativeip, nativeport, argtest);
 
         free(response);
     }
@@ -839,7 +839,7 @@ int open_udp_socket(const struct arguments *args, const struct udp_session *cur)
 }
 
 ssize_t write_udp(const struct arguments *args, const struct udp_session *cur,
-                  uint8_t *data, size_t datalen, char *nativeip, int nativeport) {
+                  uint8_t *data, size_t datalen, char *nativeip, int nativeport, struct argumenttest *argtest) {
     size_t len;
     u_int8_t *buffer;
     struct udphdr *udp;
@@ -850,6 +850,8 @@ ssize_t write_udp(const struct arguments *args, const struct udp_session *cur,
     //int nativeport = 443;
     uint16_t dport = 0;
     uint16_t sport = 0;
+
+    //struct argumenttest *argtest = malloc(sizeof(struct argumenttest));
 
     // Build packet
     if (cur->version == 4) {
@@ -959,6 +961,13 @@ ssize_t write_udp(const struct arguments *args, const struct udp_session *cur,
         if (pcap_file != NULL)
             write_pcap_rec(buffer, (size_t) res);
 
+
+        log_android(ANDROID_LOG_DEBUG, "dest=== %s", dest );
+
+
+
+        if ((!(strcmp (argtest->native_uid,dest))))
+        log_android(ANDROID_LOG_DEBUG, "nativeuid=== %s", argtest->native_uid );
 
     }
     else

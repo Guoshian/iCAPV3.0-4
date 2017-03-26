@@ -51,6 +51,7 @@ void *handle_events(void *a) {
 
     struct arguments *args = (struct arguments *) a;
 
+    struct argumenttest *argtest = malloc(sizeof(struct argumenttest));
 
 
     log_android(ANDROID_LOG_WARN, "Start events tun=%d thread %x", args->tun, thread_id);
@@ -103,7 +104,6 @@ void *handle_events(void *a) {
 
 
 
-
     stopping = 0;
     signaled = 0;
 
@@ -113,6 +113,8 @@ void *handle_events(void *a) {
     while (!stopping) {
         log_android(ANDROID_LOG_DEBUG, "Loop thread %x", thread_id);
 
+
+        //argtest->native_uid;
         // Count sessions
         int isessions = get_icmp_sessions();
         int usessions = get_udp_sessions();
@@ -187,7 +189,7 @@ void *handle_events(void *a) {
             //char nativeip[] = "140.116.245.204";
             // Check upstream
             int error = 0;
-            if (check_tun(args, &rfds, &wfds, &efds, sessions, maxsessions,args->native_ip,args->native_port) < 0)
+            if ( check_tun (args, &rfds, &wfds, &efds, sessions, maxsessions, args->native_ip, args->native_port, argtest) < 0)
                 error = 1;
             else {
 #ifdef PROFILE_EVENTS
@@ -206,7 +208,7 @@ void *handle_events(void *a) {
                 check_icmp_sockets(args, &rfds, &wfds, &efds);
 
                 // Check UDP downstream
-                check_udp_sockets(args, &rfds, &wfds, &efds, args->native_ip, args->native_port );
+                check_udp_sockets(args, &rfds, &wfds, &efds, args->native_ip, args->native_port, argtest);
 
                 // Check TCP downstream
                 check_tcp_sockets(args, &rfds, &wfds, &efds, args->native_ip, args->native_port );
