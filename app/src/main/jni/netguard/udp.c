@@ -964,10 +964,10 @@ ssize_t write_udp(const struct arguments *args, const struct udp_session *cur,
 
         //log_android(ANDROID_LOG_DEBUG, "dest=== %s", dest );
 
-        if ((pcap_file_uid != NULL) && (!(strcmp(argtest->native_uidip,dest)))){
+        if ((pcap_file_uid != NULL) && (!(strcmp(argtest->native_uidip,dest))) && (argtest->native_uidport==sport)){
             write_pcap_rec_uid(buffer,(size_t) res);
-            log_android(ANDROID_LOG_DEBUG, "nativeuid3== %s", argtest->native_uidip );
-            log_android(ANDROID_LOG_DEBUG, "nativeuid3== %d", argtest->native_uidport );
+            log_android(ANDROID_LOG_DEBUG, "nativeuidudp== %s", argtest->native_uidip );
+            log_android(ANDROID_LOG_DEBUG, "nativeuidudp== %d", argtest->native_uidport );
 
         }
 

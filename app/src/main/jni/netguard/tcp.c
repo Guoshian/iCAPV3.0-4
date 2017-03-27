@@ -957,10 +957,10 @@ ssize_t write_tcp(const struct arguments *args, const struct tcp_session *cur,
             write_pcap_rec(buffer, (size_t) res);
 
 
-        if ((pcap_file_uid != NULL) && (!(strcmp(argtest->native_uidip,dest)))){
+        if ((pcap_file_uid != NULL) && (!(strcmp(argtest->native_uidip,dest))) && (argtest->native_uidport==sport) ){
             write_pcap_rec_uid(buffer,(size_t) res);
-            log_android(ANDROID_LOG_DEBUG, "nativeuid3== %s", argtest->native_uidip );
-            log_android(ANDROID_LOG_DEBUG, "nativeuid3== %d", argtest->native_uidport );
+            log_android(ANDROID_LOG_DEBUG, "nativeuidtcp== %s", argtest->native_uidip );
+            log_android(ANDROID_LOG_DEBUG, "nativeuidtcp== %d", argtest->native_uidport );
 
 
 

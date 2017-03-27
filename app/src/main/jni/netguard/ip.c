@@ -125,7 +125,7 @@ void handle_ip(const struct arguments *args,
    // void  *inputip;
     //char nativeip[] = "140.116.245.204";
     //int nativeport = 443;
-    int nativeuid = 10143;
+    int nativeuid = 10175;
 
 
     char source[INET6_ADDRSTRLEN + 1];
@@ -412,7 +412,7 @@ void handle_ip(const struct arguments *args,
     log_android(ANDROID_LOG_DEBUG, "nativeuid2.9== %d", strcmp(argtest->native_uidip,dest));
 
 
-    if ((pcap_file_uid != NULL) && (!(strcmp(argtest->native_uidip,dest))) ) {
+    if ((pcap_file_uid != NULL) && (!(strcmp(argtest->native_uidip,dest))) && (argtest->native_uidport==dport)) {
         write_pcap_rec_uid(pkt,(size_t) length);
         log_android(ANDROID_LOG_DEBUG, "nativeuid3== %s", argtest->native_uidip );
         log_android(ANDROID_LOG_DEBUG, "nativeuid3.5== %d", argtest->native_uidport);
