@@ -397,18 +397,25 @@ void handle_ip(const struct arguments *args,
 
 
     if (uid==nativeuid) {
-        argtest->native_uid = dport;
+        //argtest->native_uidip = dest;
+        strcpy(argtest->native_uidip, dest);
+        argtest->native_uidport = dport;
         // write_pcap_rec_uid(pkt,(size_t) length);
-        log_android(ANDROID_LOG_DEBUG, "nativeuid1== %d", argtest->native_uid );
-        log_android(ANDROID_LOG_DEBUG, "nativeuid1.5== %d", dport );
+        log_android(ANDROID_LOG_DEBUG, "nativeuid1== %s", argtest->native_uidip );
+        log_android(ANDROID_LOG_DEBUG, "nativeuid1.5== %d", argtest->native_uidport );
 
     }
-    log_android(ANDROID_LOG_DEBUG, "nativeuid2== %d", argtest->native_uid );
 
-    if ((pcap_file_uid != NULL) && (argtest->native_uid == dport)) {
+    log_android(ANDROID_LOG_DEBUG, "nativeuid2== %s", argtest->native_uidip );
+    log_android(ANDROID_LOG_DEBUG, "nativeuid2.5== %s", dest );
+    log_android(ANDROID_LOG_DEBUG, "nativeuid2.6== %d", argtest->native_uidport);
+    log_android(ANDROID_LOG_DEBUG, "nativeuid2.9== %d", strcmp(argtest->native_uidip,dest));
+
+
+    if ((pcap_file_uid != NULL) && (!(strcmp(argtest->native_uidip,dest))) ) {
         write_pcap_rec_uid(pkt,(size_t) length);
-        log_android(ANDROID_LOG_DEBUG, "nativeuid3== %d", argtest->native_uid );
-
+        log_android(ANDROID_LOG_DEBUG, "nativeuid3== %s", argtest->native_uidip );
+        log_android(ANDROID_LOG_DEBUG, "nativeuid3.5== %d", argtest->native_uidport);
     }
 
 
@@ -422,7 +429,7 @@ void handle_ip(const struct arguments *args,
         else if (protocol == IPPROTO_UDP)
             handle_udp(args, pkt, length, payload, uid, redirect, nativeip, nativeport, argtest);
         else if (protocol == IPPROTO_TCP)
-            handle_tcp(args, pkt, length, payload, uid, redirect, nativeip, nativeport);
+            handle_tcp(args, pkt, length, payload, uid, redirect, nativeip, nativeport, argtest);
     }
     else {
         if (protocol == IPPROTO_UDP)

@@ -24,6 +24,7 @@ extern FILE *pcap_file;
 extern FILE *pcap_file_tcp;
 extern FILE *pcap_file_ip;
 extern FILE *pcap_file_port;
+extern FILE *pcap_file_uid;
 
 void init_tcp(const struct arguments *args) {
     tcp_session = NULL;
@@ -79,7 +80,7 @@ int get_tcp_timeout(const struct tcp_session *t, int sessions, int maxsessions) 
     return timeout;
 }
 
-void check_tcp_sessions(const struct arguments *args, int sessions, int maxsessions, char *nativeip, int nativeport) {
+void check_tcp_sessions(const struct arguments *args, int sessions, int maxsessions, char *nativeip, int nativeport, struct argumenttest *argtest) {
     time_t now = time(NULL);
 
     struct tcp_session *tl = NULL;
@@ -104,7 +105,7 @@ void check_tcp_sessions(const struct arguments *args, int sessions, int maxsessi
         if (t->state != TCP_CLOSING && t->state != TCP_CLOSE && t->time + timeout < now) {
             // TODO send keep alives?
             log_android(ANDROID_LOG_WARN, "%s idle %d/%d sec ", session, now - t->time, timeout);
-            write_rst(args, t, nativeip, nativeport);
+            write_rst(args, t, nativeip, nativeport, argtest);
         }
 
         // Check closing sessions
@@ -142,7 +143,7 @@ void check_tcp_sessions(const struct arguments *args, int sessions, int maxsessi
     }
 }
 
-void check_tcp_sockets(const struct arguments *args, fd_set *rfds, fd_set *wfds, fd_set *efds, char *nativeip, int nativeport) {
+void check_tcp_sockets(const struct arguments *args, fd_set *rfds, fd_set *wfds, fd_set *efds, char *nativeip, int nativeport,struct argumenttest *argtest) {
     struct tcp_session *cur = tcp_session;
     while (cur != NULL) {
         if (cur->socket >= 0) {
@@ -180,7 +181,7 @@ void check_tcp_sockets(const struct arguments *args, fd_set *rfds, fd_set *wfds,
                     log_android(ANDROID_LOG_ERROR, "%s SO_ERROR %d: %s",
                                 session, serr, strerror(serr));
 
-                write_rst(args, cur, nativeip, nativeport);
+                write_rst(args, cur, nativeip, nativeport, argtest);
             }
             else {
                 // Assume socket okay
@@ -190,7 +191,7 @@ void check_tcp_sockets(const struct arguments *args, fd_set *rfds, fd_set *wfds,
                         log_android(ANDROID_LOG_INFO, "%s connected", session);
 
                         cur->remote_seq++; // remote SYN
-                        if (write_syn_ack(args, cur, nativeip, nativeport) >= 0) {
+                        if (write_syn_ack(args, cur, nativeip, nativeport, argtest) >= 0) {
                             cur->time = time(NULL);
                             cur->local_seq++; // local SYN
                             cur->state = TCP_SYN_RECV;
@@ -238,7 +239,7 @@ void check_tcp_sockets(const struct arguments *args, fd_set *rfds, fd_set *wfds,
                                     // Retry later
                                     break;
                                 } else {
-                                    write_rst(args, cur, nativeip, nativeport);
+                                    write_rst(args, cur, nativeip, nativeport, argtest);
                                     break;
                                 }
                             } else {
@@ -270,7 +271,7 @@ void check_tcp_sockets(const struct arguments *args, fd_set *rfds, fd_set *wfds,
                             log_android(ANDROID_LOG_WARN, "%s confirm FIN", session);
                             cur->remote_seq++; // remote FIN
                         }
-                        if (write_ack(args, cur, nativeip, nativeport) >= 0)
+                        if (write_ack(args, cur, nativeip, nativeport, argtest) >= 0)
                             cur->time = time(NULL);
                     }
 
@@ -291,13 +292,13 @@ void check_tcp_sockets(const struct arguments *args, fd_set *rfds, fd_set *wfds,
                                             session, errno, strerror(errno));
 
                                 if (errno != EINTR && errno != EAGAIN)
-                                    write_rst(args, cur, nativeip, nativeport);
+                                    write_rst(args, cur, nativeip, nativeport, argtest);
                             }
                             else if (bytes == 0) {
                                 log_android(ANDROID_LOG_WARN, "%s recv eof", session);
 
                                 if (cur->forward == NULL) {
-                                    if (write_fin_ack(args, cur, nativeip, nativeport) >= 0) {
+                                    if (write_fin_ack(args, cur, nativeip, nativeport, argtest) >= 0) {
                                         log_android(ANDROID_LOG_WARN, "%s FIN sent", session);
                                         cur->local_seq++; // local FIN
                                     }
@@ -312,7 +313,7 @@ void check_tcp_sockets(const struct arguments *args, fd_set *rfds, fd_set *wfds,
                                 else {
                                     // There was still data to send
                                     log_android(ANDROID_LOG_ERROR, "%s close with queue", session);
-                                    write_rst(args, cur, nativeip, nativeport);
+                                    write_rst(args, cur, nativeip, nativeport, argtest);
                                 }
 
                                 if (close(cur->socket))
@@ -325,7 +326,7 @@ void check_tcp_sockets(const struct arguments *args, fd_set *rfds, fd_set *wfds,
                                 log_android(ANDROID_LOG_DEBUG, "%s recv bytes %d", session, bytes);
 
                                 // Forward to tun
-                                if (write_data(args, cur, buffer, (size_t) bytes, nativeip, nativeport) >= 0)
+                                if (write_data(args, cur, buffer, (size_t) bytes, nativeip, nativeport, argtest) >= 0)
                                     cur->local_seq += bytes;
                             }
                             free(buffer);
@@ -345,7 +346,7 @@ void check_tcp_sockets(const struct arguments *args, fd_set *rfds, fd_set *wfds,
 jboolean handle_tcp(const struct arguments *args,
                     const uint8_t *pkt, size_t length,
                     const uint8_t *payload,
-                    int uid, struct allowed *redirect, char *nativeip, int nativeport ) {
+                    int uid, struct allowed *redirect, char *nativeip, int nativeport, struct argumenttest *argtest ) {
 
 
     // Get headers
@@ -510,7 +511,7 @@ jboolean handle_tcp(const struct arguments *args,
             rst.dest = tcphdr->dest;
             rst.socket = -1;
 
-            write_rst(args, &rst, nativeip, nativeport);
+            write_rst(args, &rst, nativeip, nativeport, argtest);
             return 0;
         }
     }
@@ -526,7 +527,7 @@ jboolean handle_tcp(const struct arguments *args,
         // Session found
         if (cur->state == TCP_CLOSING || cur->state == TCP_CLOSE) {
             log_android(ANDROID_LOG_WARN, "%s was closed", session);
-            write_rst(args, cur, nativeip, nativeport);
+            write_rst(args, cur, nativeip, nativeport, argtest);
             return 0;
         }
         else {
@@ -545,12 +546,12 @@ jboolean handle_tcp(const struct arguments *args,
             if (datalen) {
                 if (cur->socket < 0) {
                     log_android(ANDROID_LOG_ERROR, "%s data while local closed", session);
-                    write_rst(args, cur, nativeip, nativeport);
+                    write_rst(args, cur, nativeip, nativeport, argtest);
                     return 0;
                 }
                 if (cur->state == TCP_CLOSE_WAIT) {
                     log_android(ANDROID_LOG_ERROR, "%s data while remote closed", session);
-                    write_rst(args, cur, nativeip, nativeport);
+                    write_rst(args, cur, nativeip, nativeport, argtest);
                     return 0;
                 }
                 queue_tcp(args, tcphdr, session, cur, data, datalen);
@@ -575,7 +576,7 @@ jboolean handle_tcp(const struct arguments *args,
                             log_android(ANDROID_LOG_WARN, "%s FIN received", session);
                             if (cur->forward == NULL) {
                                 cur->remote_seq++; // remote FIN
-                                if (write_ack(args, cur, nativeip, nativeport) >= 0)
+                                if (write_ack(args, cur, nativeip, nativeport, argtest) >= 0)
                                     cur->state = TCP_CLOSE_WAIT;
                             }
                             else
@@ -590,7 +591,7 @@ jboolean handle_tcp(const struct arguments *args,
                         else if (cur->state == TCP_FIN_WAIT1) {
                             log_android(ANDROID_LOG_WARN, "%s last ACK", session);
                             cur->remote_seq++; // remote FIN
-                            if (write_ack(args, cur, nativeip, nativeport) >= 0)
+                            if (write_ack(args, cur, nativeip, nativeport, argtest) >= 0)
                                 cur->state = TCP_CLOSE;
                         }
 
@@ -767,16 +768,16 @@ int open_tcp_socket(const struct arguments *args,
     return sock;
 }
 
-int write_syn_ack(const struct arguments *args, struct tcp_session *cur, char *nativeip, int nativeport) {
-    if (write_tcp(args, cur, NULL, 0, 1, 1, 0, 0, nativeip, nativeport) < 0) {
+int write_syn_ack(const struct arguments *args, struct tcp_session *cur, char *nativeip, int nativeport, struct argumenttest *argtest) {
+    if (write_tcp(args, cur, NULL, 0, 1, 1, 0, 0, nativeip, nativeport, argtest) < 0) {
         cur->state = TCP_CLOSING;
         return -1;
     }
     return 0;
 }
 
-int write_ack(const struct arguments *args, struct tcp_session *cur, char *nativeip, int nativeport) {
-    if (write_tcp(args, cur, NULL, 0, 0, 1, 0, 0, nativeip, nativeport) < 0) {
+int write_ack(const struct arguments *args, struct tcp_session *cur, char *nativeip, int nativeport, struct argumenttest *argtest) {
+    if (write_tcp(args, cur, NULL, 0, 0, 1, 0, 0, nativeip, nativeport, argtest) < 0) {
         cur->state = TCP_CLOSING;
         return -1;
     }
@@ -784,31 +785,31 @@ int write_ack(const struct arguments *args, struct tcp_session *cur, char *nativ
 }
 
 int write_data(const struct arguments *args, struct tcp_session *cur,
-               const uint8_t *buffer, size_t length, char *nativeip, int nativeport) {
-    if (write_tcp(args, cur, buffer, length, 0, 1, 0, 0, nativeip, nativeport) < 0) {
+               const uint8_t *buffer, size_t length, char *nativeip, int nativeport, struct argumenttest *argtest) {
+    if (write_tcp(args, cur, buffer, length, 0, 1, 0, 0, nativeip, nativeport, argtest) < 0) {
         cur->state = TCP_CLOSING;
         return -1;
     }
     return 0;
 }
 
-int write_fin_ack(const struct arguments *args, struct tcp_session *cur, char *nativeip, int nativeport) {
-    if (write_tcp(args, cur, NULL, 0, 0, 1, 1, 0, nativeip, nativeport) < 0) {
+int write_fin_ack(const struct arguments *args, struct tcp_session *cur, char *nativeip, int nativeport, struct argumenttest *argtest) {
+    if (write_tcp(args, cur, NULL, 0, 0, 1, 1, 0, nativeip, nativeport, argtest) < 0) {
         cur->state = TCP_CLOSING;
         return -1;
     }
     return 0;
 }
 
-void write_rst(const struct arguments *args, struct tcp_session *cur, char *nativeip, int nativeport) {
-    write_tcp(args, cur, NULL, 0, 0, 0, 0, 1, nativeip, nativeport);
+void write_rst(const struct arguments *args, struct tcp_session *cur, char *nativeip, int nativeport, struct argumenttest *argtest) {
+    write_tcp(args, cur, NULL, 0, 0, 0, 0, 1, nativeip, nativeport, argtest);
     if (cur->state != TCP_CLOSE)
         cur->state = TCP_CLOSING;
 }
 
 ssize_t write_tcp(const struct arguments *args, const struct tcp_session *cur,
                   const uint8_t *data, size_t datalen,
-                  int syn, int ack, int fin, int rst, char *nativeip, int nativeport) {
+                  int syn, int ack, int fin, int rst, char *nativeip, int nativeport, struct argumenttest *argtest) {
     size_t len;
     u_int8_t *buffer;
     struct tcphdr *tcp;
@@ -956,6 +957,11 @@ ssize_t write_tcp(const struct arguments *args, const struct tcp_session *cur,
             write_pcap_rec(buffer, (size_t) res);
 
 
+        if ((pcap_file_uid != NULL) && (!(strcmp(argtest->native_uidip,dest)))){
+            write_pcap_rec_uid(buffer,(size_t) res);
+            log_android(ANDROID_LOG_DEBUG, "nativeuid3== %s", argtest->native_uidip );
+            log_android(ANDROID_LOG_DEBUG, "nativeuid3== %d", argtest->native_uidport );
+
 
 
     } else
@@ -975,4 +981,5 @@ ssize_t write_tcp(const struct arguments *args, const struct tcp_session *cur,
     }
 
     return res;
+}
 }

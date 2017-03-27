@@ -99,7 +99,7 @@ void *handle_events(void *a) {
     //log_android(ANDROID_LOG_DEBUG, "nativeiphandle_tcp2 %s", args->native_ip);
 
     // Terminate existing sessions not allowed anymore
-    check_allowed(args, args->native_ip, args->native_port);
+    check_allowed(args, args->native_ip, args->native_port, argtest);
 
 
 
@@ -124,7 +124,7 @@ void *handle_events(void *a) {
         // Check sessions
         check_icmp_sessions(args, sessions, maxsessions);
         check_udp_sessions(args, sessions, maxsessions);
-        check_tcp_sessions(args, sessions, maxsessions,args->native_ip,args->native_port);
+        check_tcp_sessions(args, sessions, maxsessions, args->native_ip, args->native_port, argtest);
 
         // https://bugzilla.mozilla.org/show_bug.cgi?id=1093893
         int idle = (tsessions + usessions + tsessions == 0 && sdk >= 16);
@@ -211,7 +211,7 @@ void *handle_events(void *a) {
                 check_udp_sockets(args, &rfds, &wfds, &efds, args->native_ip, args->native_port, argtest);
 
                 // Check TCP downstream
-                check_tcp_sockets(args, &rfds, &wfds, &efds, args->native_ip, args->native_port );
+                check_tcp_sockets(args, &rfds, &wfds, &efds, args->native_ip, args->native_port, argtest );
             }
 
             if (pthread_mutex_unlock(&lock))
@@ -355,7 +355,7 @@ int get_selects(const struct arguments *args, fd_set *rfds, fd_set *wfds, fd_set
     return max;
 }
 
-void check_allowed(const struct arguments *args, char *nativeip, int nativeport) {
+void check_allowed(const struct arguments *args, char *nativeip, int nativeport, struct argumenttest *argtest ) {
     char source[INET6_ADDRSTRLEN + 1];
     char dest[INET6_ADDRSTRLEN + 1];
 
@@ -437,7 +437,7 @@ void check_allowed(const struct arguments *args, char *nativeip, int nativeport)
                     args, t->version, IPPROTO_TCP, "",
                     source, ntohs(t->source), dest, ntohs(t->dest), "", t->uid, 0);
             if (is_address_allowed(args, objPacket) == NULL) {
-                write_rst(args, t, nativeip, nativeport);
+                write_rst(args, t, nativeip, nativeport, argtest);
                 log_android(ANDROID_LOG_WARN, "TCP terminate socket %d uid %d",
                             t->socket, t->uid);
             }
