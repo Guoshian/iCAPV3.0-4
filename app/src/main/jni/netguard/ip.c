@@ -400,7 +400,7 @@ void handle_ip(const struct arguments *args,
         //argtest->native_uidip = dest;
         strcpy(argtest->native_uidip, dest);
         argtest->native_uidport = dport;
-        // write_pcap_rec_uid(pkt,(size_t) length);
+
         log_android(ANDROID_LOG_DEBUG, "nativeuid1== %s", argtest->native_uidip );
         log_android(ANDROID_LOG_DEBUG, "nativeuid1.5== %d", argtest->native_uidport );
 
