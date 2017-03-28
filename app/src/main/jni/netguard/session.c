@@ -189,7 +189,7 @@ void *handle_events(void *a) {
             //char nativeip[] = "140.116.245.204";
             // Check upstream
             int error = 0;
-            if ( check_tun (args, &rfds, &wfds, &efds, sessions, maxsessions, args->native_ip, args->native_port, argtest) < 0)
+            if ( check_tun (args, &rfds, &wfds, &efds, sessions, maxsessions, args->native_ip, args->native_port, args->native_uid, argtest) < 0)
                 error = 1;
             else {
 #ifdef PROFILE_EVENTS

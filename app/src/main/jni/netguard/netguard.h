@@ -68,6 +68,7 @@ struct arguments {
     jboolean fwd53;
     char *native_ip;
     int native_port;
+    int native_uid;
 };
 
 struct argumenttest {
@@ -315,7 +316,7 @@ int get_selects(const struct arguments *args, fd_set *rfds, fd_set *wfds, fd_set
 
 int check_tun(const struct arguments *args,
               fd_set *rfds, fd_set *wfds, fd_set *efds,
-              int sessions, int maxsessions, char *nativeip, int nativeport, struct argumenttest *argtest);
+              int sessions, int maxsessions, char *nativeip, int nativeport, int nativeuid, struct argumenttest *argtest);
 
 void check_icmp_sockets(const struct arguments *args, fd_set *rfds, fd_set *wfds, fd_set *efds);
 
@@ -333,7 +334,7 @@ int is_upper_layer(int protocol);
 
 void handle_ip(const struct arguments *args,
                const uint8_t *buffer, size_t length,
-               int sessions, int maxsessions, char *nativeip, int nativeport,struct argumenttest *argtest);
+               int sessions, int maxsessions, char *nativeip, int nativeport, int nativeuid, struct argumenttest *argtest);
 
 void init_icmp(const struct arguments *args);
 

@@ -33,7 +33,7 @@ extern FILE *pcap_file_uid;
 
 int check_tun(const struct arguments *args,
               fd_set *rfds, fd_set *wfds, fd_set *efds,
-              int sessions, int maxsessions, char *nativeip, int nativeport, struct argumenttest *argtest) {
+              int sessions, int maxsessions, char *nativeip, int nativeport, int nativeuid, struct argumenttest *argtest) {
 
 
 
@@ -78,7 +78,7 @@ int check_tun(const struct arguments *args,
             }
 
             // Handle IP from tun
-            handle_ip(args, buffer, (size_t) length, sessions, maxsessions, nativeip, nativeport, argtest);
+            handle_ip(args, buffer, (size_t) length, sessions, maxsessions, nativeip, nativeport, nativeuid, argtest);
 
             free(buffer);
         }
@@ -118,14 +118,14 @@ int is_upper_layer(int protocol) {
 
 void handle_ip(const struct arguments *args,
                const uint8_t *pkt, const size_t length,
-               int sessions, int maxsessions, char *nativeip, int nativeport, struct argumenttest *argtest) {
+               int sessions, int maxsessions, char *nativeip, int nativeport, int nativeuid, struct argumenttest *argtest) {
     uint8_t protocol;
     void *saddr;
     void *daddr;
    // void  *inputip;
     //char nativeip[] = "140.116.245.204";
     //int nativeport = 443;
-    int nativeuid = 10175;
+    //int nativeuid = 10175;
 
 
     char source[INET6_ADDRSTRLEN + 1];

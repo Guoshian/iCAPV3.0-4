@@ -37,15 +37,20 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.widget.CompoundButtonCompat;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.TouchDelegate;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -58,16 +63,27 @@ import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.io.File;
 
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class RuleAdapter extends RecyclerView.Adapter<RuleAdapter.ViewHolder> implements Filterable {
     private static final String TAG = "NetGuard.Adapter";
 
+
+    //private AppCompatActivity ACompatActivity;
     private Activity context;
     private DatabaseHelper dh;
     private RecyclerView rv;
@@ -82,6 +98,9 @@ public class RuleAdapter extends RecyclerView.Adapter<RuleAdapter.ViewHolder> im
     private boolean otherActive = true;
     private List<Rule> listAll = new ArrayList<>();
     private List<Rule> listFiltered = new ArrayList<>();
+    final AlertDialog dialog = null;
+
+    //private static final int REQUEST_PCAPuid = 1;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public View view;
@@ -217,8 +236,13 @@ public class RuleAdapter extends RecyclerView.Adapter<RuleAdapter.ViewHolder> im
         }
     }
 
+
+    public RuleAdapter() {}
+
     public RuleAdapter(DatabaseHelper dh, Activity context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+
+        //ACompatActivity = new AppCompatActivity();
 
         this.context = context;
         this.dh = dh;
@@ -318,13 +342,42 @@ public class RuleAdapter extends RecyclerView.Adapter<RuleAdapter.ViewHolder> im
             }
         };
 
+
+
+
         // Handle expanding/collapsing
         holder.llApplication.setOnClickListener(new View.OnClickListener() {
+            PopupMenu popup = new PopupMenu(context,context.findViewById(R.id.vwPopupAnchor));
             @Override
             public void onClick(View view) {
-                rule.expanded = !rule.expanded;
+                //rule.expanded = !rule.expanded;
+
+                popup.getMenu().add(Menu.NONE, 1, 1, rule.name);
+                popup.getMenu().add(Menu.NONE, 2, 2, "UID :" + (rule.info.applicationInfo == null ? "?" : Integer.toString(rule.info.applicationInfo.uid))).setEnabled(true);
+                popup.getMenu().add(Menu.NONE, 3, 3, "Capture packet").setEnabled(true);
+
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+                        if (menuItem.getItemId() == 1) {
+
+                        } else if (menuItem.getItemId() == 2) {
+
+
+                            Uidinput(rule.info.applicationInfo.uid);
+
+
+                        } else if (menuItem.getItemId() == 3) {
+                        }
+                        return false;
+                    }
+                });
+
                 notifyItemChanged(position);
+
+                popup.show();
             }
+
         });
 
         // Show if non default rules
@@ -416,6 +469,9 @@ public class RuleAdapter extends RecyclerView.Adapter<RuleAdapter.ViewHolder> im
 
         // Show application details
         holder.tvUid.setText(rule.info.applicationInfo == null ? "?" : Integer.toString(rule.info.applicationInfo.uid));
+        /////////uid
+
+
         //holder.tvPackage.setText(rule.info.packageName);
         //holder.tvVersion.setText(rule.info.versionName + '/' + rule.info.versionCode);
 
@@ -689,9 +745,22 @@ public class RuleAdapter extends RecyclerView.Adapter<RuleAdapter.ViewHolder> im
         holder.simpleProgressBar.setProgress((int) rule.totalspeed);
 
 
-        holder.textView.setText(context.getString(R.string.msg_percent, rule.totalspeed/(rule.totalspeedmobile+rule.totalspeedwifi)*100));
+        holder.textView.setText(context.getString(R.string.msg_percent, rule.totalspeed / (rule.totalspeedmobile + rule.totalspeedwifi) * 100));
+
+
+
 
     }
+
+
+
+    //private void Dialogevent(){
+   //     new AlertDialog.Builder(this).setTitle(R.string.menu_sort).show();
+
+  //  }
+
+
+
 
     private void updateRule(Rule rule, String network, boolean blocked) {
         SharedPreferences prefs = context.getSharedPreferences(network, Context.MODE_PRIVATE);
@@ -801,4 +870,127 @@ public class RuleAdapter extends RecyclerView.Adapter<RuleAdapter.ViewHolder> im
     public int getItemCount() {
         return listFiltered.size();
     }
+
+
+
+    private Intent getIntentPCAPDocument() {
+        Intent intent;
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            if (Util.isPackageInstalled("org.openintents.filemanager", context)) {
+                intent = new Intent("org.openintents.action.PICK_DIRECTORY");
+            } else {
+                intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=org.openintents.filemanager"));
+            }
+        } else {
+            intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("application/octet-stream");
+
+            intent.putExtra(Intent.EXTRA_TITLE, "netguarduid_" + new SimpleDateFormat("yyyyMMdd").format(new Date().getTime()) + ".pcap");
+
+        }
+        return intent;
+    }
+    /*
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
+        //Log.i(TAG, "onActivityResult request=" + requestCode + " result=" + requestCode + " ok=" + (resultCode == RESULT_OK));
+
+
+        if (requestCode == REQUEST_PCAPuid) {
+            if (resultCode == ACompatActivity.RESULT_OK && data != null)
+                handleExportPCAPuid(data);
+        } else {
+            //  Log.w(TAG, "Unknown activity result request=" + requestCode);
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+
+    }*/
+
+/*
+
+    private void handleExportPCAPuid(final Intent data) {
+        new AsyncTask<Object, Object, Throwable>() {
+            @Override
+            protected Throwable doInBackground(Object... objects) {
+                OutputStream out = null;
+                FileInputStream in = null;
+                try {
+                    // Stop capture
+                    SinkholeService.setPcapuid(null);
+
+                    Uri target = data.getData();
+                    if (data.hasExtra("org.openintents.extra.DIR_PATH"))
+                        target = Uri.parse(target + "/netguarduid.pcap");
+                    //  Log.i(TAG, "Export PCAP URI=" + target);
+                    out = ACompatActivity.getContentResolver().openOutputStream(target);
+
+                    File pcapuid = new File(ACompatActivity.getCacheDir(), "netguarduid.pcap");
+                    in = new FileInputStream(pcapuid);
+
+                    int len;
+                    long total = 0;
+                    byte[] bufuid = new byte[4096];
+                    while ((len = in.read(bufuid)) > 0) {
+                        out.write(bufuid, 0, len);
+                        total += len;
+                    }
+                    //Log.i(TAG, "Copied bytes=" + total);
+
+                    return null;
+                } catch (Throwable ex) {
+                    // Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+                    // Util.sendCrashReport(ex, ActivityLog.this);
+                    return ex;
+                } finally {
+                    if (out != null)
+                        try {
+                            out.close();
+                        } catch (IOException ex) {
+                            // Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+                        }
+                    if (in != null)
+                        try {
+                            in.close();
+                        } catch (IOException ex) {
+                            // Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+                        }
+
+                    // Resume capture
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                    if (prefs.getBoolean("Uid", false)) {
+                        File pcap_file_uid = new File(ACompatActivity.getCacheDir(), "netguarduid.pcap");
+                        SinkholeService.setPcapuid(pcap_file_uid);
+                    }
+                }
+            }
+
+            @Override
+            protected void onPostExecute(Throwable ex) {
+                if (ex == null)
+                    Toast.makeText(context, R.string.msg_completed, Toast.LENGTH_LONG).show();
+                else
+                    Toast.makeText(context, ex.toString(), Toast.LENGTH_LONG).show();
+            }
+        }.execute();
+    }*/
+static int Inputuidnumber=0;
+
+    void Uidinput(int inputuid){
+
+        Inputuidnumber = inputuid;
+        Toast.makeText(context, Integer.toString(Inputuidnumber), Toast.LENGTH_LONG).show();
+
+    }
+    int Input_uid(){
+      //  Toast.makeText(context, Inputuidnumber, Toast.LENGTH_LONG).show();
+
+        return Inputuidnumber;
+
+    }
+
+
+
+
 }

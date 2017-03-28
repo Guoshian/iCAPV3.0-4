@@ -67,6 +67,7 @@ import android.text.style.StyleSpan;
 import android.util.Log;
 import android.util.TypedValue;
 import android.widget.RemoteViews;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -102,6 +103,7 @@ public class SinkholeService extends VpnService implements SharedPreferences.OnS
     private boolean phone_state = false;
     private Object subscriptionsChangedListener = null;
     private ParcelFileDescriptor vpn = null;
+
 
     private Map<String, Boolean> mapHostsBlocked = new HashMap<>();
     private Map<Integer, Boolean> mapUidAllowed = new HashMap<>();
@@ -142,7 +144,7 @@ public class SinkholeService extends VpnService implements SharedPreferences.OnS
 
     private native void jni_init();
 
-    private native void jni_start(int tun, boolean fwd53, int loglevel, String nativeip, int nativeport);
+    private native void jni_start(int tun, boolean fwd53, int loglevel, String nativeip, int nativeport, int nativeuid);
 
     private native void jni_stop(int tun, boolean clear);
 
@@ -877,14 +879,23 @@ public class SinkholeService extends VpnService implements SharedPreferences.OnS
         boolean filter = prefs.getBoolean("filter", false);
         String nativeip="null";
         int nativeport= 0;
+        int nativeuid = 0;
+
 
         ActivityPro4 InputIporPort = new ActivityPro4();
+        RuleAdapter Inputuid  = new RuleAdapter();
+
+        nativeuid = Inputuid.Input_uid();
+
+        Log.i(TAG, "nativeuid=" + nativeuid);
 
         if (InputIporPort.InputIp_edittext() != null)
             nativeip = InputIporPort.InputIp_edittext();
 
         if (InputIporPort.InputPort_edittext() != 0)
             nativeport = InputIporPort.InputPort_edittext();
+
+
 
 
 
@@ -901,7 +912,7 @@ public class SinkholeService extends VpnService implements SharedPreferences.OnS
 
         if (log || filter) {
             int prio = Integer.parseInt(prefs.getString("loglevel", Integer.toString(Log.WARN)));
-            jni_start(vpn.getFd(), mapForward.containsKey(53), prio, nativeip, nativeport);
+            jni_start(vpn.getFd(), mapForward.containsKey(53), prio, nativeip, nativeport, nativeuid);
         }
 
         // Native needs to be started for name resolving

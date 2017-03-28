@@ -326,6 +326,7 @@ public class ActivityLog extends AppCompatActivity implements SharedPreferences.
         final File pcap_file_tcp = new File(getCacheDir(), "netguardtcp.pcap");
         final File pcap_file_ip = new File(getCacheDir(), "netguardip.pcap");
         final File pcap_file_port = new File(getCacheDir(), "netguardip.pcap");
+        final File pcap_file_uid= new File(getCacheDir(), "netguarduid.pcap");
 
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -449,7 +450,16 @@ public class ActivityLog extends AppCompatActivity implements SharedPreferences.
                                 Log.w(TAG, "Delete PCAP failed");
                         }
 
-
+                        if (prefs.getBoolean("Port", false)) {
+                            SinkholeService.setPcapuid(null);
+                            if (pcap_file_uid.exists() && !pcap_file_uid.delete())
+                                Log.w(TAG, "Delete PCAP failed");
+                            SinkholeService.setPcapuid(pcap_file_uid);
+                        }
+                        else {
+                            if (pcap_file_uid.exists() && !pcap_file_uid.delete())
+                                Log.w(TAG, "Delete PCAP failed");
+                        }
 
                         return null;
                     }
