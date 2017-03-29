@@ -37,7 +37,9 @@ however it is impossible to guarantee NetGuard will work correctly on every devi
 
   <string name="menu_pcap">PCAP</string>
   <string name="menu_pcap_enabled1">PCAP enable</string>
-  <string name="menu_pcap_export1">=>PCAP export</string>
+  <string name="menu_pcap_export1">=>Capture Packet</string>
+  <string name="menu_pcap_export2">=>Capture App Packet</string>
+  <string name="title_pro4">=>Capture Specify Packet</string>
   <string name="menu_clear1">=>清除</string>
 
   <string name="menu_reset">Reset</string>
@@ -194,7 +196,6 @@ Your internet traffic is not being sent to a remote VPN server.</string>
   <string name="title_pro1">Capture for Condition</string>
   <string name="title_pro2">Capture for App</string>
   <string name="title_pro3">Capture for another</string>
-  <string name="title_pro4">Capture for filter</string>
   <string name="title_pro5">Capture for uid</string>
 
   <string-array name="themeNames">

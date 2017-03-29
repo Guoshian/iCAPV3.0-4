@@ -86,6 +86,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
     private static final int REQUEST_LOGCAT = 3;
     public static final int REQUEST_ROAMING = 4;
     private static final int REQUEST_PCAP = 5;
+    private static final int REQUEST_UIDPCAP = 6;
 
     private static final int MIN_SDK = Build.VERSION_CODES.ICE_CREAM_SANDWICH;
 
@@ -475,7 +476,14 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             //super.onActivityResult(requestCode, resultCode, data);
         }
 
+        if (requestCode == REQUEST_UIDPCAP) {
+            if (resultCode == RESULT_OK && data != null)
+                handleExportUIDPCAP(data);
 
+        } else {
+            Log.w(TAG, "Unknown activity result request=" + requestCode);
+            //super.onActivityResult(requestCode, resultCode, data);
+        }
 
 
     }
@@ -663,7 +671,13 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         File pcap_file = new File(getCacheDir(), "netguard.pcap");
-        boolean export = (getPackageManager().resolveActivity(getIntentPCAPDocument(), 0) != null);
+        boolean export = (getPackageManager().resolveActivity(getIntentPCAPDocument(0), 0) != null);
+
+
+        File pcap_file_uid = new File(getCacheDir(), "netguarduid.pcap");
+        boolean exportuid = (getPackageManager().resolveActivity(getIntentPCAPDocument(1), 0) != null);
+
+
         /*if (prefs.getBoolean("manage_system", false)) {
             /*menu.findItem(R.id.menu_app_user).setChecked(prefs.getBoolean("show_user", true));
             menu.findItem(R.id.menu_app_system).setChecked(prefs.getBoolean("show_system", false));
@@ -686,6 +700,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         menu.findItem(R.id.menu_pcap_enabled1).setEnabled(prefs.getBoolean("filter", false));
         menu.findItem(R.id.menu_pcap_enabled1).setChecked(prefs.getBoolean("pcap", false));
         menu.findItem(R.id.menu_pcap_export1).setEnabled(pcap_file.exists() && export);
+        menu.findItem(R.id.menu_pcap_export2).setEnabled(pcap_file_uid.exists() && exportuid);
 
         return super.onPrepareOptionsMenu(menu);
     }
@@ -746,10 +761,16 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                 item.setChecked(!item.isChecked());
                 prefs.edit().putBoolean("pcap", item.isChecked()).apply();
                 SinkholeService.setPcap(item.isChecked() ? pcap_file : null);
+                prefs.edit().putBoolean("Uid", item.isChecked()).apply();
+                SinkholeService.setPcapuid(item.isChecked() ? pcap_file_uid : null);
                 return true;
 
             case R.id.menu_pcap_export1:
-                startActivityForResult(getIntentPCAPDocument(), REQUEST_PCAP);
+                startActivityForResult(getIntentPCAPDocument(0), REQUEST_PCAP);
+                return true;
+
+            case R.id.menu_pcap_export2:
+                startActivityForResult(getIntentPCAPDocument(1), REQUEST_UIDPCAP);
                 return true;
 
             case R.id.menu_log_clear1:
@@ -857,9 +878,9 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                 startActivity(new Intent(this, ActivitySettings.class));
                 return true;
 
-            case R.id.menu_pro:
+            /*case R.id.menu_pro:
                 startActivity(new Intent(this, ActivityPro.class));
-                return true;
+                return true;*/
 
             //case R.id.menu_pro1:
                 //startActivity(new Intent(this, ActivityPro1.class));
@@ -883,17 +904,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                 return true;
 
 
-            /*case R.id.menu_invite:
-                startActivityForResult(getIntentInvite(this), REQUEST_INVITE);
-                return true;
-
-            case R.id.menu_support:
-                startActivity(getIntentSupport());
-                return true;
-
-            case R.id.menu_about:
-                menu_about();
-                return true;*/
 
             default:
                 return super.onOptionsItemSelected(item);
@@ -1004,7 +1014,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
     }
 
 
-    private Intent getIntentPCAPDocument() {
+    private Intent getIntentPCAPDocument(int pro) {
         Intent intent;
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             if (Util.isPackageInstalled("org.openintents.filemanager", this)) {
@@ -1013,11 +1023,17 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                 intent = new Intent(Intent.ACTION_VIEW);
                 intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=org.openintents.filemanager"));
             }
-        } else {
+        } else if (pro==0){
             intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
             intent.addCategory(Intent.CATEGORY_OPENABLE);
             intent.setType("application/octet-stream");
             intent.putExtra(Intent.EXTRA_TITLE, "netguard_" + new SimpleDateFormat("yyyyMMdd").format(new Date().getTime()) + ".pcap");
+        } else{
+            intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("application/octet-stream");
+            intent.putExtra(Intent.EXTRA_TITLE, "netguarduid_" + new SimpleDateFormat("yyyyMMdd").format(new Date().getTime()) + ".pcap");
+
         }
         return intent;
     }
@@ -1088,5 +1104,71 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         }.execute();
     }
 
+
+    private void handleExportUIDPCAP(final Intent data) {
+        new AsyncTask<Object, Object, Throwable>() {
+            @Override
+            protected Throwable doInBackground(Object... objects) {
+                OutputStream out = null;
+                FileInputStream in = null;
+                try {
+                    // Stop capture
+                    SinkholeService.setPcapuid(null);
+
+                    Uri target = data.getData();
+                    if (data.hasExtra("org.openintents.extra.DIR_PATH"))
+                        target = Uri.parse(target + "/netguarduid.pcap");
+                    Log.i(TAG, "Export PCAP URI=" + target);
+                    out = getContentResolver().openOutputStream(target);
+
+                    File pcapuid = new File(getCacheDir(), "netguarduid.pcap");
+                    in = new FileInputStream(pcapuid);
+
+                    int len;
+                    long total = 0;
+                    byte[] bufuid = new byte[4096];
+                    while ((len = in.read(bufuid)) > 0) {
+                        out.write(bufuid, 0, len);
+                        total += len;
+                    }
+                    Log.i(TAG, "Copied bytes=" + total);
+
+                    return null;
+                } catch (Throwable ex) {
+                    Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+                    Util.sendCrashReport(ex, ActivityMain.this);
+                    return ex;
+                } finally {
+                    if (out != null)
+                        try {
+                            out.close();
+                        } catch (IOException ex) {
+                            Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+                        }
+                    if (in != null)
+                        try {
+                            in.close();
+                        } catch (IOException ex) {
+                            Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+                        }
+
+                    // Resume capture
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ActivityMain.this);
+                    if (prefs.getBoolean("Uid", false)) {
+                        File pcap_file_uid = new File(getCacheDir(), "netguarduid.pcap");
+                        SinkholeService.setPcapuid(pcap_file_uid);
+                    }
+                }
+            }
+
+            @Override
+            protected void onPostExecute(Throwable ex) {
+                if (ex == null)
+                    Toast.makeText(ActivityMain.this, R.string.msg_completed, Toast.LENGTH_LONG).show();
+                else
+                    Toast.makeText(ActivityMain.this, ex.toString(), Toast.LENGTH_LONG).show();
+            }
+        }.execute();
+    }
 
 }

@@ -82,6 +82,15 @@
     <item
         android:id="@+id/menu_pcap_export1"
         android:title="@string/menu_pcap_export1" />
+
+    <item
+        android:id="@+id/menu_pcap_export2"
+        android:title="@string/menu_pcap_export2" />
+
+    <item
+        android:id="@+id/menu_pro4"
+        android:title="@string/title_pro4" />
+
     <item
         android:id="@+id/menu_log_clear1"
         android:title= "@string/menu_clear1" />
@@ -94,9 +103,10 @@
     <item
         android:id="@+id/menu_settings"
         android:title="@string/menu_settings" />
-    <item
+    <!--<item
         android:id="@+id/menu_pro"
         android:title="@string/title_pro" />
+
     <item
         android:id="@+id/menu_pro1"
         android:title="@string/title_pro1" />
@@ -106,11 +116,8 @@
 
     <item
         android:id="@+id/menu_pro3"
-        android:title="@string/title_pro3" />
+        android:title="@string/title_pro3" />-->
 
-    <item
-        android:id="@+id/menu_pro4"
-        android:title="@string/title_pro4" />
 
     <item
         android:id="@+id/menu_pro5"

@@ -889,12 +889,11 @@ public class SinkholeService extends VpnService implements SharedPreferences.OnS
 
         Log.i(TAG, "nativeuid=" + nativeuid);
 
-        if (InputIporPort.InputIp_edittext() != null)
+        //if (InputIporPort.InputIp_edittext() != null)
             nativeip = InputIporPort.InputIp_edittext();
 
-        if (InputIporPort.InputPort_edittext() != 0)
+       // if (InputIporPort.InputPort_edittext() != 0)
             nativeport = InputIporPort.InputPort_edittext();
-
 
 
 
