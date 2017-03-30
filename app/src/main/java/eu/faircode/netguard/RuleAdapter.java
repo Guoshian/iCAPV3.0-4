@@ -351,23 +351,19 @@ public class RuleAdapter extends RecyclerView.Adapter<RuleAdapter.ViewHolder> im
             @Override
             public void onClick(View view) {
                 //rule.expanded = !rule.expanded;
-
-                popup.getMenu().add(Menu.NONE, 1, 1, rule.name);
-                popup.getMenu().add(Menu.NONE, 2, 2, "UID :" + (rule.info.applicationInfo == null ? "?" : Integer.toString(rule.info.applicationInfo.uid))).setEnabled(true);
-                popup.getMenu().add(Menu.NONE, 3, 3, "Capture packet").setEnabled(true);
+                Uidinput(rule.info.applicationInfo.uid);
+                popup.getMenu().add(Menu.NONE, 1, 1, "Please turn on iCap button to start  " );
+                popup.getMenu().add(Menu.NONE, 2, 2, "capturing "+rule.name);
+                //popup.getMenu().add(Menu.NONE, 2, 2, "UID :" + (rule.info.applicationInfo == null ? "?" : Integer.toString(rule.info.applicationInfo.uid))).setEnabled(true);
+                //popup.getMenu().add(Menu.NONE, 3, 3, "Capture packet").setEnabled(true);
 
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem menuItem) {
                         if (menuItem.getItemId() == 1) {
 
-                        } else if (menuItem.getItemId() == 2) {
+                        }else if (menuItem.getItemId() == 2) {
 
-
-                            Uidinput(rule.info.applicationInfo.uid);
-
-
-                        } else if (menuItem.getItemId() == 3) {
                         }
                         return false;
                     }
@@ -872,7 +868,7 @@ public class RuleAdapter extends RecyclerView.Adapter<RuleAdapter.ViewHolder> im
     }
 
 
-
+/*
     private Intent getIntentPCAPDocument() {
         Intent intent;
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
@@ -891,7 +887,7 @@ public class RuleAdapter extends RecyclerView.Adapter<RuleAdapter.ViewHolder> im
 
         }
         return intent;
-    }
+    }*/
     /*
     @Override
     protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
@@ -975,7 +971,7 @@ public class RuleAdapter extends RecyclerView.Adapter<RuleAdapter.ViewHolder> im
             }
         }.execute();
     }*/
-static int Inputuidnumber=0;
+    static int Inputuidnumber=0;
 
     void Uidinput(int inputuid){
 

@@ -443,12 +443,6 @@ void handle_ip(const struct arguments *args,
 
 
 
-
-
-
-
-
-
 #ifdef PROFILE_EVENTS
     gettimeofday(&end, NULL);
     mselapsed = (end.tv_sec - start.tv_sec) * 1000.0 +
