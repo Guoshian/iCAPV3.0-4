@@ -102,7 +102,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
     private ProgressBar progressBar;
     public TextView textView11;
-    public TextView textView10;
+   // public TextView textView10;
 
     //public NumberPicker numberPicker;
 
@@ -207,8 +207,8 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
 
         // Total Traffic
-        tv_mobileTraffic = (TextView) findViewById(R.id.mobile_traffic);
-        tv_wifiTraffic = (TextView) findViewById(R.id.wifi_traffic);
+        //tv_mobileTraffic = (TextView) findViewById(R.id.mobile_traffic);
+        //tv_wifiTraffic = (TextView) findViewById(R.id.wifi_traffic);
 
 
 
@@ -217,14 +217,14 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
         progressBar = (ProgressBar)findViewById(R.id.progressBar);
         textView11 = (TextView)findViewById(R.id.textView11);
-        textView10 = (TextView)findViewById(R.id.textView10);
+        //textView10 = (TextView)findViewById(R.id.textView10);
 
        // textView8 = (TextView)findViewById(R.id.textView8);
 
-        editText2 = (EditText)findViewById(R.id.editText2);
-        button = (Button)findViewById(R.id.button);
+        //editText2 = (EditText)findViewById(R.id.editText2);
+        //button = (Button)findViewById(R.id.button);
 
-        button.setOnClickListener(new Button.OnClickListener() {
+        /*button.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
                 //textView8.setText(editText2.getText());
 
@@ -236,12 +236,12 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
 
                 textView11.setText(getString(R.string.msg_mbdaymobilePercent, ((TrafficStats.getMobileRxBytes() + TrafficStats.getMobileTxBytes()) / 1024f / 1024f) / (Traffic) * 100));
-                textView10.setText(getString(R.string.msg_mbdaymobileUsage, (Traffic-((TrafficStats.getMobileRxBytes() + TrafficStats.getMobileTxBytes()) / 1024f / 1024f))));
+                //textView10.setText(getString(R.string.msg_mbdaymobileUsage, (Traffic-((TrafficStats.getMobileRxBytes() + TrafficStats.getMobileTxBytes()) / 1024f / 1024f))));
 
             }
 
 
-        });
+        });*/
 
 
 
@@ -381,12 +381,12 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
     @Override
     protected void onResume() {
         float mobileTraffic = (float) (TrafficStats.getMobileRxBytes()+TrafficStats.getMobileTxBytes()) / 1024f / 1024f;
-        tv_mobileTraffic.setText(getString(R.string.msg_mbdaymobileUD, mobileTraffic));
+        //tv_mobileTraffic.setText(getString(R.string.msg_mbdaymobileUD, mobileTraffic));
 
         float wifiRXTraffic = (float) (TrafficStats.getTotalRxBytes()-TrafficStats.getMobileRxBytes());
         float wifiTXTraffic = (float) TrafficStats.getTotalTxBytes()-TrafficStats.getMobileTxBytes();
         float wifiTraffic =  (wifiRXTraffic + wifiTXTraffic) / 1024f / 1024f ;
-        tv_wifiTraffic.setText(getString(R.string.msg_mbdaywifiUD, wifiTraffic));
+        //tv_wifiTraffic.setText(getString(R.string.msg_mbdaywifiUD, wifiTraffic));
 
 
         dh.addAccessChangedListener(accessChangedListener);
