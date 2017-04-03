@@ -26,6 +26,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.net.TrafficStats;
 import android.net.Uri;
@@ -44,6 +45,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SwitchCompat;
+import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.util.TypedValue;
@@ -52,10 +54,14 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.FilterQueryProvider;
+import android.widget.ListView;
 import android.widget.NumberPicker;
+import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
@@ -65,6 +71,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -74,12 +82,16 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
     private boolean running = false;
     private SwipeRefreshLayout swipeRefresh;
-    private DatabaseHelper dh;
+    private DatabaseHelper dh,dh_log;
     private RuleAdapter adapter = null;
+    private LogAdapter adapter_log;
     private MenuItem menuSearch = null;
     private AlertDialog dialogFirst = null;
     private AlertDialog dialogVpn = null;
     private AlertDialog dialogAbout = null;
+    private boolean resolve;
+    private InetAddress vpn4 = null;
+    private InetAddress vpn6 = null;
 
     private static final int REQUEST_VPN = 1;
     private static final int REQUEST_INVITE = 2;
@@ -93,6 +105,21 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
     public static final String ACTION_RULES_CHANGED = "eu.faircode.netguard.ACTION_RULES_CHANGED";
     public static final String EXTRA_SEARCH = "Search";
     public static final String EXTRA_APPROVE = "Approve";
+
+    private ListView lvLog;
+
+    private DatabaseHelper.LogChangedListener listener = new DatabaseHelper.LogChangedListener() {
+        @Override
+        public void onChanged() {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    updateAdapter();
+                }
+            });
+        }
+    };
+
     private TextView tv_mobileTraffic;
     private TextView tv_wifiTraffic;
 
@@ -100,8 +127,8 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
     private EditText editText2;
     private TextView textView8;
 
-    private ProgressBar progressBar;
-    public TextView textView11;
+    //private ProgressBar progressBar;
+    //public TextView textView11;
    // public TextView textView10;
 
     //public NumberPicker numberPicker;
@@ -215,8 +242,8 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         //int mobileTraffic1 = Integer.valueOf(tv_mobileTraffic.getText().toString());
 
 
-        progressBar = (ProgressBar)findViewById(R.id.progressBar);
-        textView11 = (TextView)findViewById(R.id.textView11);
+       // progressBar = (ProgressBar)findViewById(R.id.progressBar);
+        //textView11 = (TextView)findViewById(R.id.textView11);
         //textView10 = (TextView)findViewById(R.id.textView10);
 
        // textView8 = (TextView)findViewById(R.id.textView8);
@@ -244,14 +271,124 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         });*/
 
 
-
-
-
-
-
         //int[] to_layout = new int[]{R.id.textView,R.id.mobile_traffic};
 
         //SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.list_row, Cursor , from_column , to_layout);
+        resolve = prefs.getBoolean("resolve", false);
+
+        lvLog = (ListView) findViewById(R.id.lvLog);
+
+        boolean udp = prefs.getBoolean("proto_udp", true);
+        boolean tcp = prefs.getBoolean("proto_tcp", true);
+        boolean other = prefs.getBoolean("proto_other", true);
+        boolean allowed = prefs.getBoolean("traffic_allowed", true);
+        boolean blocked = prefs.getBoolean("traffic_blocked", true);
+
+        dh_log = new DatabaseHelper(this);
+        adapter_log = new LogAdapter(this, dh_log.getLog(udp, tcp, other, allowed, blocked), resolve);
+        adapter_log.setFilterQueryProvider(new FilterQueryProvider() {
+            public Cursor runQuery(CharSequence constraint) {
+                return dh_log.searchLog(constraint.toString());
+            }
+        });
+
+
+        dh_log.addLogChangedListener(listener);
+        updateAdapter();
+
+        lvLog.setAdapter(adapter_log);
+
+        try {
+            vpn4 = InetAddress.getByName(prefs.getString("vpn4", "10.1.10.1"));
+            vpn6 = InetAddress.getByName(prefs.getString("vpn6", "fd00:1:fd00:1:fd00:1:fd00:1"));
+        } catch (UnknownHostException ex) {
+            Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+        }
+
+        lvLog.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //PackageManager pm = getPackageManager();
+                Cursor cursor = (Cursor) adapter_log.getItem(position);
+                //long time = cursor.getLong(cursor.getColumnIndex("time"));
+                final String daddr = cursor.getString(cursor.getColumnIndex("daddr"));
+                final int dport = (cursor.isNull(cursor.getColumnIndex("dport")) ? -1 : cursor.getInt(cursor.getColumnIndex("dport")));
+                final String saddr = cursor.getString(cursor.getColumnIndex("saddr"));
+                final int sport = (cursor.isNull(cursor.getColumnIndex("sport")) ? -1 : cursor.getInt(cursor.getColumnIndex("sport")));
+                final int uid = (cursor.isNull(cursor.getColumnIndex("uid")) ? -1 : cursor.getInt(cursor.getColumnIndex("uid")));
+
+                // Get external address
+                InetAddress addr = null;
+                try {
+                    addr = InetAddress.getByName(daddr);
+                } catch (UnknownHostException ex) {
+                    Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+                }
+
+                String ip;
+                int port;
+                if (addr.equals(vpn4) || addr.equals(vpn6)) {
+                    ip = saddr;
+                    port = sport;
+                } else {
+                    ip = daddr;
+                   port = dport;
+                }
+
+                //Build popup menu
+                PopupMenu popup = new PopupMenu(ActivityMain.this, findViewById(R.id.vwPopupAnchor));
+
+                if (uid >= 0)
+                    popup.getMenu().add(Menu.NONE, 1, 1, TextUtils.join(", ", Util.getApplicationNames(uid, ActivityMain.this)));
+
+                //final Intent lookupIP = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.tcpiputils.com/whois-lookup/" + ip));
+                popup.getMenu().add(Menu.NONE, 2, 2, getString(R.string.title_log_whois, ip))
+                        .setEnabled(true);
+
+               //final Intent lookupPort = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.speedguide.net/port.php?port=" + port));
+                if (port > 0)
+                    popup.getMenu().add(Menu.NONE, 3, 3, getString(R.string.title_log_port, dport))
+                            .setEnabled(true);
+
+             //   popup.getMenu().add(Menu.NONE, 4, 4, SimpleDateFormat.getDateTimeInstance().format(time))
+              //          .setEnabled(false);
+
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+                        if (menuItem.getItemId() == 1) {
+                            Intent main = new Intent(ActivityMain.this, ActivityMain.class);
+                            main.putExtra(ActivityMain.EXTRA_SEARCH, Integer.toString(uid));
+                            startActivity(main);
+                        } else if (menuItem.getItemId() == 2){}
+                            //startActivity(lookupIP);
+                        else if (menuItem.getItemId() == 3){}
+                            //startActivity(lookupPort);
+                        return false;
+                    }
+                });
+
+                popup.show();
+            }
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -628,6 +765,8 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main, menu);
+        
+
 
         // Search
         menuSearch = menu.findItem(R.id.menu_search);
@@ -638,6 +777,10 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                 if (adapter != null)
                     adapter.getFilter().filter(query);
                 searchView.clearFocus();
+                if (adapter_log != null)
+                    adapter_log.getFilter().filter(query);
+                searchView.clearFocus();
+
                 return true;
             }
 
@@ -645,6 +788,10 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             public boolean onQueryTextChange(String newText) {
                 if (adapter != null)
                     adapter.getFilter().filter(newText);
+                //imporant
+                if (adapter_log != null)
+                    adapter_log.getFilter().filter(newText);
+
                 return true;
             }
         });
@@ -653,6 +800,10 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             public boolean onClose() {
                 if (adapter != null)
                     adapter.getFilter().filter(null);
+                if (adapter_log != null)
+                    adapter_log.getFilter().filter(null);
+
+
                 return true;
             }
         });
@@ -777,7 +928,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                 new AsyncTask<Object, Object, Object>() {
                     @Override
                     protected Object doInBackground(Object... objects) {
-                        dh.clearLog();
+                        dh_log.clearLog();
                         if (prefs.getBoolean("pcap", false)) {
                             SinkholeService.setPcap(null);
                             if (pcap_file.exists() && !pcap_file.delete())
@@ -1012,6 +1163,25 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         }
         return intent;
     }
+
+
+    private void updateAdapter() {
+        if (adapter_log != null) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            boolean udp = prefs.getBoolean("proto_udp", true);
+            boolean tcp = prefs.getBoolean("proto_tcp", true);
+            boolean other = prefs.getBoolean("proto_other", true);
+            boolean allowed = prefs.getBoolean("traffic_allowed", true);
+            boolean blocked = prefs.getBoolean("traffic_blocked", true);
+            adapter_log.changeCursor(dh_log.getLog(udp, tcp, other, allowed, blocked));
+            if (menuSearch != null && menuSearch.isActionViewExpanded()) {
+                SearchView searchView = (SearchView) MenuItemCompat.getActionView(menuSearch);
+                adapter_log.getFilter().filter(searchView.getQuery().toString());
+            }
+        }
+    }
+
+
 
 
     private Intent getIntentPCAPDocument(int pro) {

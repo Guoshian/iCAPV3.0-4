@@ -44,24 +44,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="@style/TextTitle"
-                    android:text="@string/title_mobile"
-                    android:layout_marginLeft="3dp"
-                    android:id="@+id/mobile" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="@style/TextTitle"
-                    android:text="@string/title_wifi"
-                    android:id="@+id/wifi"
-                    android:layout_marginLeft="35dp"
-                    android:layout_column="23" />
-
-
 
             </TableRow>
 
@@ -90,109 +72,6 @@
             android:id="@+id/wifi_traffic"
             android:textSize="@dimen/abc_action_bar_content_inset_material" />-->
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:weightSum="1">
-
-            <Space
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="0.08" />
-
-            <ListView
-                android:id="@+id/lvLog"
-                android:layout_width="wrap_content"
-                android:layout_height="251dp"
-                android:scrollbarStyle="insideOverlay"
-                android:scrollbars="vertical"
-                android:layout_alignParentTop="true"
-                android:layout_toRightOf="@+id/tvDisabled"
-                android:layout_toEndOf="@+id/tvDisabled" />
-
-            <ProgressBar
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="244dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/progressBar"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:indeterminate="false"
-                android:contextClickable="false"
-                android:layout_weight="0.47"
-                />
-
-            <Space
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="0.19" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:id="@+id/textView11"
-                android:text="0%"
-                android:textColor="#111010" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:weightSum="1">
-
-            <!--<TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="計量"
-                android:id="@+id/textView6" />
-
-            <EditText
-                android:layout_width="85dp"
-                android:layout_height="wrap_content"
-                android:inputType="number"
-                android:ems="10"
-                android:id="@+id/editText2" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="MB"
-                android:id="@+id/textView7" />
-
-            <Button
-                android:layout_width="46dp"
-                android:layout_height="wrap_content"
-                android:text="OK"
-                android:id="@+id/button" />
-
-            <Space
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="0.63" />-->
-
-            <!--<TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="剩餘量"
-                android:id="@+id/textView9" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="0MB"
-                android:id="@+id/textView10" />-->
-
-        </LinearLayout>
-
         <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/swipeRefresh"
             android:layout_width="match_parent"
@@ -206,6 +85,16 @@
                 android:scrollbarStyle="insideOverlay"
                 android:scrollbars="vertical" />
         </android.support.v4.widget.SwipeRefreshLayout>
+
+        <ListView
+            android:id="@+id/lvLog"
+            android:layout_width="match_parent"
+            android:layout_height="133dp"
+            android:scrollbarStyle="insideOverlay"
+            android:scrollbars="vertical"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/tvDisabled"
+            android:layout_toEndOf="@+id/tvDisabled" />
     </LinearLayout>
 
     <View

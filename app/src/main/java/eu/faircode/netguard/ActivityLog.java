@@ -400,6 +400,7 @@ public class ActivityLog extends AppCompatActivity implements SharedPreferences.
                     @Override
                     protected Object doInBackground(Object... objects) {
                         dh.clearLog();
+
                         if (prefs.getBoolean("pcap", false)) {
                             SinkholeService.setPcap(null);
                             if (pcap_file.exists() && !pcap_file.delete())
