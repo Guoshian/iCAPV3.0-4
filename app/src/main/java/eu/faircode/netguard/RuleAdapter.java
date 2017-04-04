@@ -350,7 +350,7 @@ public class RuleAdapter extends RecyclerView.Adapter<RuleAdapter.ViewHolder> im
             PopupMenu popup = new PopupMenu(context,context.findViewById(R.id.vwPopupAnchor));
             @Override
             public void onClick(View view) {
-                rule.expanded = !rule.expanded;
+                //rule.expanded = !rule.expanded;
                 Uidinput(rule.info.applicationInfo.uid);
                 popup.getMenu().add(Menu.NONE, 1, 1, "Please turn on iCap button to start  " );
                 popup.getMenu().add(Menu.NONE, 2, 2, "capturing "+rule.name);
