@@ -119,7 +119,7 @@ public class LogAdapter extends CursorAdapter {
         long time = cursor.getLong(colTime);
         int version = (cursor.isNull(colVersion) ? -1 : cursor.getInt(colVersion));
         int protocol = (cursor.isNull(colProtocol) ? -1 : cursor.getInt(colProtocol));
-        String flags = cursor.getString(colFlags);
+        //String flags = cursor.getString(colFlags);
         String saddr = cursor.getString(colSAddr);
         int sport = (cursor.isNull(colSPort) ? -1 : cursor.getInt(colSPort));
         String daddr = cursor.getString(colDaddr);
@@ -134,7 +134,7 @@ public class LogAdapter extends CursorAdapter {
         // Get views
         TextView tvTime = (TextView) view.findViewById(R.id.tvTime);
         TextView tvProtocol = (TextView) view.findViewById(R.id.tvProtocol);
-        TextView tvFlags = (TextView) view.findViewById(R.id.tvFlags);
+        //TextView tvFlags = (TextView) view.findViewById(R.id.tvFlags);
         TextView tvSAddr = (TextView) view.findViewById(R.id.tvSAddr);
         TextView tvSPort = (TextView) view.findViewById(R.id.tvSPort);
         final TextView tvDaddr = (TextView) view.findViewById(R.id.tvDAddr);
@@ -142,13 +142,13 @@ public class LogAdapter extends CursorAdapter {
         ImageView ivIcon = (ImageView) view.findViewById(R.id.ivIcon);
         TextView tvUid = (TextView) view.findViewById(R.id.tvUid);
         TextView tvData = (TextView) view.findViewById(R.id.tvData);
-        ImageView ivConnection = (ImageView) view.findViewById(R.id.ivConnection);
-        ImageView ivInteractive = (ImageView) view.findViewById(R.id.ivInteractive);
+        //ImageView ivConnection = (ImageView) view.findViewById(R.id.ivConnection);
+        //ImageView ivInteractive = (ImageView) view.findViewById(R.id.ivInteractive);
 
         // Set values
         tvTime.setText(new SimpleDateFormat("HH:mm:ss").format(time));
 
-        if (connection <= 0)
+        /*if (connection <= 0)
             ivConnection.setImageDrawable(null);
         else {
             if (allowed > 0)
@@ -159,9 +159,9 @@ public class LogAdapter extends CursorAdapter {
                 Drawable wrap = DrawableCompat.wrap(ivConnection.getDrawable());
                 DrawableCompat.setTint(wrap, allowed > 0 ? colorOn : colorOff);
             }
-        }
+        }*/
 
-        if (interactive <= 0)
+        /*if (interactive <= 0)
             ivInteractive.setImageDrawable(null);
         else {
             ivInteractive.setImageResource(R.drawable.screen_on);
@@ -169,11 +169,11 @@ public class LogAdapter extends CursorAdapter {
                 Drawable wrap = DrawableCompat.wrap(ivInteractive.getDrawable());
                 DrawableCompat.setTint(wrap, colorOn);
             }
-        }
+        }*/
 
         tvProtocol.setText(Util.getProtocolName(protocol, version, false));
 
-        tvFlags.setText(flags);
+        //tvFlags.setText(flags);
 
         if (protocol == 6 || protocol == 17) {
             tvSPort.setText(sport < 0 ? "" : getKnownPort(sport));

@@ -765,7 +765,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main, menu);
-        
+        //inflater.inflate(R.menu.log, menu);
 
 
         // Search

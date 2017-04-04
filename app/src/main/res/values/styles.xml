@@ -16,6 +16,12 @@
         <item name="android:windowDisablePreview">true</item>
     </style>
 
+    <style name="MyStyle">
+        <item name="android:textSize">10sp</item>
+    </style>
+
+
+
     <style name="AppThemeTeal" parent="BaseThemeDark">
         <item name="colorPrimary">@color/colorBluePrimary</item>
         <item name="colorPrimaryDark">@color/colorBluePrimaryDark</item>

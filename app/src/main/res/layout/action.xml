@@ -1,17 +1,25 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="?attr/colorPrimary"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:weightSum="1">
 
     <android.support.v7.widget.SwitchCompat
         android:id="@+id/swEnabled"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_marginLeft="12dp"
-        android:layout_marginStart="12dp"
-        android:saveEnabled="false" />
+        android:layout_width="60dp"
+        android:layout_height="35dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginStart="20dp"
+        android:saveEnabled="false"
+        android:checked="false"
+        android:layout_weight="2"
+        android:textOff="OFF"
+        android:textOn="ON"
+        app:showText="true"
+        app:switchTextAppearance="@style/MyStyle" />
 
 
 
