@@ -37,9 +37,9 @@ import java.util.Date;
 import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
-    private static final String TAG = "NetGuard.Database";
+    private static final String TAG = "iCap.Database";
 
-    private static final String DB_NAME = "Netguard";
+    private static final String DB_NAME = "iCap";
     private static final int DB_VERSION = 16;
 
     private static boolean once = true;

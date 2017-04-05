@@ -127,6 +127,8 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
     private EditText editText2;
     private TextView textView8;
 
+    int switchon;
+
     //private ProgressBar progressBar;
     //public TextView textView11;
    // public TextView textView10;
@@ -180,9 +182,20 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         swEnabled.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 Log.i(TAG, "Switch=" + isChecked);
+                if (isChecked){
+                    switchon = 1;
+                    Input_switchon(switchon);
+                }
+                else {
+                    switchon = 2;
+                    Input_switchon(switchon);
+                }
                 prefs.edit().putBoolean("enabled", isChecked).apply();
 
                 if (isChecked) {
+
+
+                    //Toast.makeText(ActivityMain.this, Integer.toString(switchon), Toast.LENGTH_SHORT);
                     try {
                         final Intent prepare = VpnService.prepare(ActivityMain.this);
                         if (prepare == null) {
@@ -237,7 +250,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         //tv_mobileTraffic = (TextView) findViewById(R.id.mobile_traffic);
         //tv_wifiTraffic = (TextView) findViewById(R.id.wifi_traffic);
 
-
+        //Toast.makeText(ActivityMain.this, Integer.toString(switchon), Toast.LENGTH_SHORT);
 
         //int mobileTraffic1 = Integer.valueOf(tv_mobileTraffic.getText().toString());
 
@@ -1340,5 +1353,19 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             }
         }.execute();
     }
+
+
+    static int switch_number=2;
+
+    void Input_switchon(int switchon){
+
+        switch_number = switchon;
+    }
+
+    int Return_switchon(){
+
+        return switch_number;
+    }
+
 
 }

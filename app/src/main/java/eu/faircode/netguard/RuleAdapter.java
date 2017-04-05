@@ -307,6 +307,8 @@ public class RuleAdapter extends RecyclerView.Adapter<RuleAdapter.ViewHolder> im
         rv = null;
     }
 
+    ActivityMain AM = new ActivityMain();
+
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         // Get rule
@@ -348,14 +350,24 @@ public class RuleAdapter extends RecyclerView.Adapter<RuleAdapter.ViewHolder> im
         // Handle expanding/collapsing
         holder.llApplication.setOnClickListener(new View.OnClickListener() {
             PopupMenu popup = new PopupMenu(context,context.findViewById(R.id.vwPopupAnchor));
+
             @Override
             public void onClick(View view) {
                 //rule.expanded = !rule.expanded;
-                Uidinput(rule.info.applicationInfo.uid);
-                popup.getMenu().add(Menu.NONE, 1, 1, "Please turn on iCap button to start  " );
-                popup.getMenu().add(Menu.NONE, 2, 2, "capturing "+rule.name);
-                //popup.getMenu().add(Menu.NONE, 2, 2, "UID :" + (rule.info.applicationInfo == null ? "?" : Integer.toString(rule.info.applicationInfo.uid))).setEnabled(true);
-                //popup.getMenu().add(Menu.NONE, 3, 3, "Capture packet").setEnabled(true);
+                Input_uid(rule.info.applicationInfo.uid);
+
+
+                if (AM.Return_switchon()==2){
+                popup.getMenu().add(Menu.NONE, 1, 1, "Please turn on iCap button to start " );
+                popup.getMenu().add(Menu.NONE, 2, 2, "capturing packet from "+rule.name);
+
+                }
+                else if (AM.Return_switchon()==1)
+                {
+                    popup.getMenu().add(Menu.NONE, 1, 1, "Please turn off iCap button to stop " );
+                    popup.getMenu().add(Menu.NONE, 2, 2, "capturing packet from "+rule.name);
+                }
+
 
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
@@ -971,18 +983,18 @@ public class RuleAdapter extends RecyclerView.Adapter<RuleAdapter.ViewHolder> im
             }
         }.execute();
     }*/
-    static int Inputuidnumber=0;
+    static int uid_number=0;
 
-    void Uidinput(int inputuid){
+    void Input_uid(int inputuid){
 
-        Inputuidnumber = inputuid;
-        Toast.makeText(context, Integer.toString(Inputuidnumber), Toast.LENGTH_LONG).show();
+        uid_number = inputuid;
+        Toast.makeText(context, Integer.toString(uid_number), Toast.LENGTH_LONG).show();
 
     }
-    int Input_uid(){
+    int Return_uid(){
       //  Toast.makeText(context, Inputuidnumber, Toast.LENGTH_LONG).show();
 
-        return Inputuidnumber;
+        return uid_number;
 
     }
 

@@ -885,7 +885,7 @@ public class SinkholeService extends VpnService implements SharedPreferences.OnS
         ActivityPro4 InputIporPort = new ActivityPro4();
         RuleAdapter Inputuid  = new RuleAdapter();
 
-        nativeuid = Inputuid.Input_uid();
+        nativeuid = Inputuid.Return_uid();
 
         Log.i(TAG, "nativeuid=" + nativeuid);
 
