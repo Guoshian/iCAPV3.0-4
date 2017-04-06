@@ -241,7 +241,10 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                     }
 
                 } else
+                {
                     SinkholeService.stop("switch off", ActivityMain.this);
+                    dh_log.clearLog();
+                }
             }
         });
 

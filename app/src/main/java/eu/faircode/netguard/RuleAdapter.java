@@ -350,7 +350,7 @@ public class RuleAdapter extends RecyclerView.Adapter<RuleAdapter.ViewHolder> im
         // Handle expanding/collapsing
         holder.llApplication.setOnClickListener(new View.OnClickListener() {
             PopupMenu popup = new PopupMenu(context,context.findViewById(R.id.vwPopupAnchor));
-
+            String a;
             @Override
             public void onClick(View view) {
                 //rule.expanded = !rule.expanded;
@@ -358,25 +358,27 @@ public class RuleAdapter extends RecyclerView.Adapter<RuleAdapter.ViewHolder> im
 
 
                 if (AM.Return_switchon()==2){
-                popup.getMenu().add(Menu.NONE, 1, 1, "Please turn on iCap button to start " );
-                popup.getMenu().add(Menu.NONE, 2, 2, "capturing packet from "+rule.name);
-
+                    popup.getMenu().add(Menu.NONE, 1, 1, "Please   TURN ON   iCap button" );
+                    popup.getMenu().add(Menu.NONE, 2, 2, "to   START   capturing packet");
+                    popup.getMenu().add(Menu.NONE, 3, 3, "from "+rule.name);
+                    popup.getMenu().add(Menu.NONE, 4, 4, "and TURN OFF iCap to stop capturing");
+                    Input_app_string(rule.name);
                 }
                 else if (AM.Return_switchon()==1)
                 {
-                    popup.getMenu().add(Menu.NONE, 1, 1, "Please turn off iCap button to stop " );
-                    popup.getMenu().add(Menu.NONE, 2, 2, "capturing packet from "+rule.name);
+                    popup.getMenu().add(Menu.NONE, 1, 1, "Please   TURN OFF   iCap button"  );
+                    popup.getMenu().add(Menu.NONE, 2, 2, "to   STOP   capturing packet");
+                    popup.getMenu().add(Menu.NONE, 3, 3, "from "+Return_app_string());
                 }
 
 
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem menuItem) {
-                        if (menuItem.getItemId() == 1) {
-
-                        }else if (menuItem.getItemId() == 2) {
-
-                        }
+                        if (menuItem.getItemId() == 1) {}
+                        else if (menuItem.getItemId() == 2) {}
+                        else if (menuItem.getItemId() == 3) {}
+                        else if (menuItem.getItemId() == 4) {}
                         return false;
                     }
                 });
@@ -984,6 +986,7 @@ public class RuleAdapter extends RecyclerView.Adapter<RuleAdapter.ViewHolder> im
         }.execute();
     }*/
     static int uid_number=0;
+    String app_string="";
 
     void Input_uid(int inputuid){
 
@@ -992,13 +995,22 @@ public class RuleAdapter extends RecyclerView.Adapter<RuleAdapter.ViewHolder> im
 
     }
     int Return_uid(){
-      //  Toast.makeText(context, Inputuidnumber, Toast.LENGTH_LONG).show();
 
         return uid_number;
 
     }
 
+    void Input_app_string(String appstring){
 
+        app_string = appstring;
+
+    }
+
+    String Return_app_string(){
+
+        return app_string;
+
+    }
 
 
 }
